@@ -1,0 +1,5 @@
+# Eval workspace (local test-run artifacts)
+project-bootstrap-workspace/
+
+# OS noise
+.DS_Store
