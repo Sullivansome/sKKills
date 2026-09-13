@@ -12,13 +12,13 @@ Use `--turbopack` for dev. For an existing project, never re-scaffold — just a
 
 ## Lint + format
 
-- **ESLint**: `eslint-config-next` is the official config (includes React, hooks, a11y, and `@next/next` rules like no-img-element). With ESLint flat config: `import next from 'eslint-config-next'` — or keep the generated `.eslintrc.json` if that's what the scaffold produced. Note: `next lint` is deprecated/removed in Next 15+; run `eslint .` directly as the lint script.
+- **ESLint**: `eslint-config-next` is the official config (includes React, hooks, a11y, and `@next/next` rules like no-img-element). Use the flat-config exports supported by the installed `eslint-config-next` version (for example its `core-web-vitals` entry), preserving valid existing configuration. `next lint` was deprecated in Next 15.4 and removed in Next 16; run `eslint .` directly for modern versions.
 - **Biome alternative**: works but you lose the Next-specific rules. Acceptable for teams that prefer speed; keep ESLint if the user relies on `next/core-web-vitals`.
 - Format with Prettier (`prettier-plugin-tailwindcss` if Tailwind) or Biome format. Never run two formatters.
 
 ## Typecheck
 
-`next build` typechecks by default, but it's slow for a quick check — keep a dedicated `tsc --noEmit` script using the generated `tsconfig.json` (which includes `next-env.d.ts` and the bundler moduleResolution). Add `next-env.d.ts` to the typecheck include if it's gitignored.
+For installed Next versions supporting it, use `next typegen && tsc --noEmit` so a clean checkout has generated route types and `next-env.d.ts` before checking. Preserve the generated `tsconfig.json` includes. For older versions, use the documented supported generation/build path and verify from a clean fixture. See the [official CLI reference](https://nextjs.org/docs/app/api-reference/cli/next).
 
 ## Tests
 

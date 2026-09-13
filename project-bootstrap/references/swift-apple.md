@@ -24,28 +24,37 @@ xcodebuild -scheme MyApp -destination 'platform=macOS' test          # macOS
 xcodebuild -scheme MyApp -destination 'platform=iOS Simulator,name=iPhone 16' test  # iOS
 ```
 
-Prefer `xcodebuild` over `xcpretty`-wrapped pipelines unless the user wants pretty logs; if logs are unreadable, use `xcbeautify`.
+Prefer `xcodebuild` over `xcpretty`-wrapped pipelines unless the user wants pretty logs; if logs are unreadable, use `xcbeautify` with shell `pipefail` so a failed build cannot be masked.
 
 ## Pre-commit
 
-Plain git hook (installed via a `scripts/install-hooks.sh` checked into the repo — git hooks aren't cloned) running SwiftFormat + SwiftLint on staged files only:
+Use the project's staged-content-aware hook framework. For a project using `pre-commit`, local non-mutating hooks can check staged Swift files while the framework handles unstaged changes:
 
-```sh
-git diff --cached --name-only --diff-filter=d -- '*.swift' | while read f; do
-  swiftformat "$f"; swiftlint lint --quiet "$f"
-done
-git add -u   # re-stage formatter fixes
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: swiftformat
+        name: SwiftFormat check
+        entry: swiftformat --lint
+        language: system
+        types: [swift]
+      - id: swiftlint
+        name: SwiftLint check
+        entry: swiftlint lint --strict
+        language: system
+        types: [swift]
 ```
 
-Keep it to format+lint; `xcodebuild` anything is far too slow for a hook.
+Verify filename argument handling against the pinned tool versions. Do not use `git add -u`, unquoted filename loops, or a formatter that silently includes unstaged hunks. Test failure propagation, filenames with spaces, and partial staging in an isolated fixture. Keep project-wide builds out of the commit hook.
 
 ## CI
 
 Runs on macOS runners — the expensive part. Minimize macOS minutes:
 
-- `runs-on: macos-14` (ARM, cheaper/faster than intel), `actions/checkout@v4`
-- Select Xcode: `sudo xcode-select -s /Applications/Xcode_16.app` (runner images list available versions — pin one)
-- Cache DerivedData/SPM only if builds are slow; wrong cache keys cost more than they save. `runs-on: macos-14` builds are usually fast enough without.
+- `runs-on: macos-15` (ARM; verify the supported runner and required architecture), `actions/checkout@v4`
+- Select an exact Xcode version listed in the chosen runner image and compatible with the project; do not assume an example application path exists
+- Cache DerivedData/SPM only if builds are slow; wrong cache keys cost more than they save. Supported macOS runner builds are usually fast enough without.
 - Steps: `swiftformat --lint .` → `swiftlint lint --strict` → `xcodebuild ... test`
 
 ## Release

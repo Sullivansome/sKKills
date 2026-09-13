@@ -1,11 +1,17 @@
 ---
 name: project-bootstrap
-description: Set up a complete development workflow for a new or existing project — scaffolding, pre-commit hooks, linting, formatting, type checking, GitHub Actions CI, and release pipelines (desktop installers dmg/msi/AppImage, GitHub Releases, curl install scripts). Covers Node/TypeScript, Next.js, TanStack (Start/Router/Query), React, Electron, Tauri, Wails (Go), Python, Kotlin/Android, and Swift (iOS/macOS). Use this whenever the user starts a new project or repo, asks to set up or fix linting/formatting/hooks/type checking, wants a CI workflow, asks about releasing/publishing builds, desktop installers (dmg, msi, AppImage), Android APK/AAB or Apple notarization/TestFlight release flows, or wants an install script — even if they don't use the word "scaffold" or "bootstrap".
+description: Scaffold a repository or set up reproducible development tooling, formatting, linting, type checks, hooks, CI, and initial artifact release pipelines. Covers web, desktop, mobile, and CLI stacks. Use for missing or broken project setup and build automation; use release-delivery for production rollout and recovery decisions.
 ---
 
 # Project Bootstrap
 
-Set up a project so that quality checks run the same way locally and in CI, and releases are one tag push away. The goal is boring reliability: `git commit` runs fast local checks, every push runs the full suite in CI, and pushing a `v*` tag publishes installers.
+Set up a project so that quality checks run the same way locally and in CI. Preserve working conventions and the user's requested scope. Tag-driven artifact releases are one option; service deployment can use the project's existing delivery model.
+
+## Before changing files
+
+Read repository instructions, inspect staged and unstaged changes, and identify existing commands, lockfiles, runtime versions, and CI provider. Add what is missing without re-scaffolding an existing project or replacing working tooling. Read only relevant stack references. Their commands and action tags are adaptation examples: verify compatibility with the installed versions and current official documentation before using them. Never copy a placeholder as a real version or invent a commit SHA.
+
+Scale setup to the project: a documentation-only repository need not acquire a compiler or test framework. Do not create dummy passing tests or use no-tests-found overrides to manufacture a green pipeline. A new test runner needs a meaningful smoke/regression test, or an explicit statement that test coverage remains absent.
 
 ## Step 1 — Detect the stack
 
@@ -31,12 +37,12 @@ If it's a desktop app (dmg/msi/AppImage mentioned, or Electron/Tauri/Wails detec
 
 Every check must be runnable as a single command, identical locally and in CI. Use whatever the ecosystem already provides (package.json scripts, just/Makefile, pre-commit config) — do not invent a new task runner if one exists.
 
-The contract is always these five commands (names may vary per stack):
+Cover these responsibilities where applicable (names may vary per stack, and a compiler can cover both typecheck and build):
 
 1. `format` / `format:check` — auto-fix and CI-verify variants
 2. `lint` — static analysis
 3. `typecheck` — no emit, fast
-4. `test` — unit tests
+4. `test` — relevant automated tests, with slower integration/e2e checks separate when useful
 5. `build` — proves the thing compiles
 
 Why this matters: if CI runs `eslint src/` but the local hook runs something else, drift is guaranteed. One definition, two callers (pre-commit hook and CI job).
@@ -45,21 +51,23 @@ Why this matters: if CI runs `eslint src/` but the local hook runs something els
 
 Follow the stack reference file. Universal principles:
 
-- **Pin tool versions** (lockfile, `.tool-versions`, `rust-toolchain.toml`, `packageManager` field). "Works on my machine" failures are almost always version skew.
+- **Pin tool versions** (lockfile, `.tool-versions`, `rust-toolchain.toml`, exact `packageManager` field) and use locked installs. Check OS, environment, generated files, and external services too when local/CI behavior differs.
 - **Fast tools beat configurable tools.** Prefer Biome over ESLint+Prettier, Ruff over flake8+black+isort, unless the project already has the slower stack — don't churn existing configs without being asked.
 - **Formatting and linting are separate concerns.** The formatter owns whitespace/style; the linter owns bugs and suspicious patterns. Configure them so they don't fight (e.g. turn off stylistic lint rules the formatter handles).
 
 ## Step 4 — Pre-commit hooks
 
-Hooks run on staged files only, and only the fast checks (format + lint, maybe typecheck if <5s). Tests belong in CI, not in the commit path — slow hooks train developers to use `--no-verify`, which defeats the entire setup.
+Prefer fast staged-file format/lint checks. If a tool only supports whole-project checks, use non-mutating checks against the staged snapshot or put it in pre-push/CI; never silently include unstaged hunks. Preserve an existing fast meaningful test hook. Move slow checks out of the commit path based on measured runtime.
 
 Per-stack tooling: `lint-staged` + `husky` (Node), `pre-commit` framework (Python, or polyglot), or a plain `.git/hooks/pre-commit` script for tiny projects. The stack reference has the exact config.
 
-After installing, verify by staging a deliberately badly-formatted file and committing — the hook should fix or reject it.
+Verify hooks in an isolated temporary repository with the relevant configuration and pinned tools. Exercise bad formatting, a lint failure, a filename containing spaces, and partial staging. Confirm exit codes and that unrelated/unstaged content stays out of the index. Do not create a test commit, stage a deliberate defect, or run blanket `git add` in the user's working repository.
 
 ## Step 5 — GitHub Actions CI
 
-Start from `assets/workflows/ci.yml` and adapt it to the stack. The CI job must run the exact same commands from Step 2, in this order: format:check → lint → typecheck → test → build. Cache dependencies (pnpm/cargo/pip) or every run wastes 1–3 minutes.
+Start from `assets/workflows/ci.yml` and adapt it to the stack. Run the applicable Step 2 commands: format:check → lint → typecheck → test → build, respecting generation dependencies. Use ecosystem-supported dependency caching where it improves measured runtime.
+
+The template deliberately fails until adapted. Replace its guard with actual applicable commands; merely deleting the guard is not a working CI configuration. Run required code generation before checks that consume generated types. Preserve an existing CI provider unless switching is requested. Use explicit read-only permissions for checks, bounded job timeouts, and job-scoped release permissions. Keep secrets away from untrusted PR code. Resolve production action references to verified full commit SHAs and use the project's tested runtime/toolchain versions.
 
 For a desktop app, add a smoke-build job on the target platforms (macOS, Windows, Linux) so cross-platform breakage shows up before release day, not during it.
 
@@ -74,7 +82,7 @@ Read `references/release.md`. The short version:
 
 ## Step 7 — Verify, don't assume
 
-Before declaring done, actually run: the format check, the linter, the typechecker, the tests, and a commit that exercises the hook. For release workflows, dry-run what you can (`tauri build` locally, `electron-builder --dir`, `act` if available) and clearly tell the user that the full pipeline only proves itself on the first real tag push.
+Before declaring done, run applicable format, lint, type, test, and build commands, and exercise the hook in the isolated fixture. Validate workflow syntax and inspect trigger/permission behavior; local tools such as `act` do not reproduce every hosted runner or signing environment. Report unavailable checks separately from passes. For release workflows, dry-run supported builds and identify which hosted/signing checks remain unverified. Do not push tags or publish merely to test setup without existing authorization.
 
 Report back a short summary: what was installed, which commands to run, and what happens on tag push.
 

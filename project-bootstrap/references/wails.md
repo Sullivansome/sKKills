@@ -9,13 +9,17 @@ Wails apps are two stacks in one repo: a Go backend and a JS frontend (usually i
 ## Go toolchain (the contract)
 
 ```sh
-gofmt -l .                  # format:check (gofmt -w . to fix) — or goimports
+unformatted=$(gofmt -l .) || exit 1
+if [ -n "$unformatted" ]; then
+  printf '%s\n' "$unformatted"
+  exit 1
+fi                         # format:check; gofmt -w . to fix
 go vet ./...
 golangci-lint run           # lint aggregator
 go test ./...
 ```
 
-`golangci-lint` is the standard linter — one binary wrapping dozens of linters. Add a minimal `.golangci.yml` (enable `govet`, `staticcheck`, `errcheck`, `gofmt`/`goimports`) rather than running a pile of separate tools. Pin its version in CI (`golangci/golangci-lint-action` handles install + caching).
+`golangci-lint` is the standard linter — one binary wrapping dozens of linters. Add a minimal `.golangci.yml` matching the installed major version. For v2, set `version: "2"`, keep `govet`, `staticcheck`, and `errcheck` under linters, and put `gofmt`/`goimports` under formatters with a separate format check. See the [migration guide](https://golangci-lint.run/docs/product/migration-guide/). Pin its version in CI (`golangci/golangci-lint-action` handles install + caching).
 
 ## Frontend toolchain
 
@@ -37,4 +41,4 @@ Wails has no equivalent of tauri-action — you orchestrate the matrix yourself:
 - **Windows**: `wails build -platform windows/amd64` → `.exe`. There's no native msi maker; ship the exe, or add NSIS (`makensis`) for an installer. Wails v3 is improving this — check the version.
 - **Linux**: `wails build -platform linux/amd64` → binary; AppImage via `linuxdeploy` + appimagetool (needs the `.desktop` file and icon; Wails generates them in `build/`).
 
-Upload all artifacts with `softprops/action-gh-release@v2` on tag push, with a stable naming scheme (`myapp-x.y.z-darwin-universal.dmg`, `...-windows-amd64.exe`, `...-linux-amd64.AppImage`) plus `checksums.txt` so `assets/install.sh` can verify downloads. The curl script works well for the AppImage and macOS dmg.
+Upload all artifacts with `softprops/action-gh-release@v2` on tag push, with a stable naming scheme (`myapp-x.y.z-darwin-universal.dmg`, `...-windows-amd64.exe`, `...-linux-amd64.AppImage`) plus `checksums.txt` so `assets/install.sh` can verify downloads. The bundled curl script is a CLI tarball template, not an AppImage/dmg installer. Implement and test an explicit per-format installer if requested; do not point tar extraction at an AppImage or dmg.

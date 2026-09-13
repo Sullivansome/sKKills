@@ -6,17 +6,22 @@
 
 ```toml
 [toolchain]
-channel = "stable"
+channel = "REPLACE_WITH_TESTED_EXACT_RUST_VERSION"
 components = ["rustfmt", "clippy"]
 ```
+
+Replace the version placeholder with an exact version verified against the project before writing this file. A floating `stable` channel is not a reproducibility pin. CI should use this file rather than install a separate floating toolchain.
 
 ## Format / lint / test (the contract)
 
 ```sh
 cargo fmt --all -- --check   # format:check (drop --check to fix)
-cargo clippy --all-targets --all-features -- -D warnings   # lint, warnings as errors
-cargo test --all-features
+cargo clippy --locked --all-targets -- -D warnings   # lint, warnings as errors
+cargo test --locked
+cargo build --locked
 ```
+
+Use `--locked` when the repository commits Cargo.lock. Test the supported feature combinations explicitly; do not assume all features can be enabled together.
 
 `-D warnings` in CI is what keeps the codebase warning-free; without it warnings accumulate until they're noise. If the project is a workspace, use `--workspace`.
 
@@ -32,17 +37,17 @@ repos:
     hooks:
       - id: fmt
         name: cargo fmt
-        entry: cargo fmt --all
+        entry: cargo fmt --all -- --check
         language: system
         pass_filenames: false
       - id: clippy
         name: cargo clippy
-        entry: cargo clippy --all-targets -- -D warnings
+        entry: cargo clippy --locked --all-targets -- -D warnings
         language: system
         pass_filenames: false
 ```
 
-Clippy on the whole workspace is slow for large projects; if it exceeds ~10s, move clippy to a pre-push hook and keep only `fmt` in pre-commit.
+These are non-mutating whole-project checks; verify the framework's staged-snapshot behavior in a fixture. Measure runtime and move clippy or formatting to pre-push/CI when too slow. Do not substitute a mutating whole-worktree formatter in a plain hook.
 
 ## CI notes
 

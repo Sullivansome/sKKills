@@ -7,7 +7,7 @@ Electron is the Node/TS stack plus a desktop release pipeline. Read `node-ts.md`
 - `electron` in dependencies, `electron-builder` or `electron-forge` config, `main` field pointing at a main-process entry
 - electron-vite / electron-forge / electron-builder are the three common toolchains — keep whichever exists
 
-Scaffold new: `pnpm create @quick-start/electron` (electron-vite) is the current sane default.
+For a new electron-vite project, verify its current official scaffolding command (for example `pnpm create @quick-start/electron`). Preserve the user's chosen toolchain.
 
 ## Toolchain notes
 
@@ -16,7 +16,7 @@ Scaffold new: `pnpm create @quick-start/electron` (electron-vite) is the current
 
 ## Tests
 
-Vitest for main/renderer logic. Playwright has first-class Electron support (`_electron.launch`) for e2e — CI only.
+Vitest for main/renderer logic. Playwright exposes experimental Electron automation through `_electron.launch`; verify support for the installed Electron/Playwright versions and use it for appropriate integration/e2e checks.
 
 ## Release: dmg / msi / AppImage via electron-builder
 
@@ -42,4 +42,4 @@ Gotchas:
 - Keep `version` in package.json in sync with the tag — electron-builder uses package.json's version for asset names.
 - electron-forge instead? Use its makers (`@electron-forge/maker-dmg` etc.) + `electron-forge publish`; same matrix idea.
 
-Curl install script: adapt `assets/install.sh` — Linux downloads the AppImage, macOS the dmg (script can `hdiutil attach` + copy .app), Windows prints the msi link.
+Curl install script: the bundled `assets/install.sh` handles CLI tarballs only. If an AppImage or dmg installer is requested, implement a separate verified format-specific path and publish matching checksums; do not feed desktop artifacts to tar extraction. Windows can link to the selected installer.

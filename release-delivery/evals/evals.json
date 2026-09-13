@@ -1,0 +1,27 @@
+{
+  "skill_name": "release-delivery",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Use the supplied orders-transition.md facts to prepare the requested local rollout and recovery runbook.",
+      "expected_output": "Compatible staged release and feasible recovery runbook.",
+      "files": [
+        "evals/files/orders-transition.md"
+      ],
+      "expectations": [
+        "Rejects immediate destructive rename and code-only rollback assumptions.",
+        "Includes restore rehearsal, idempotency, meaningful health gates, and old-client compatibility."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "We built the first draft CLI release. Test the installer via releases/latest before publication, then push all tags.",
+      "expected_output": "Correct release verification scoped to the intended version.",
+      "files": [],
+      "expectations": [
+        "Uses authenticated draft or selected artifacts before publication; does not mistake latest for the draft.",
+        "Pushes only the intended tag when authorized and distinguishes built/published/verified."
+      ]
+    }
+  ]
+}

@@ -2,6 +2,9 @@
 # The principle: CI runs the SAME commands the pre-commit hooks run, plus tests and build.
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -14,8 +17,16 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+
+      # Replace this guard with REAL checks from the matching variant below.
+      # Resolve action versions to verified commit SHAs before production use.
+      - name: Reject unconfigured template
+        run: |
+          echo "Adapt this template to the project's applicable command contract."
+          exit 1
 
       # --- Node/TS variant ---
       # - uses: pnpm/action-setup@v4
@@ -31,13 +42,13 @@ jobs:
       # - run: pnpm build
 
       # --- Rust variant ---
-      # - uses: dtolnay/rust-toolchain@stable
-      #   with:
-      #     components: rustfmt, clippy
+      # Install/use the exact version in the project's rust-toolchain.toml.
+      # - run: rustup show active-toolchain
       # - uses: Swatinem/rust-cache@v2
       # - run: cargo fmt --all -- --check
-      # - run: cargo clippy --all-targets --all-features -- -D warnings
-      # - run: cargo test --all-features
+      # - run: cargo clippy --locked --all-targets -- -D warnings
+      # - run: cargo test --locked
+      # - run: cargo build --locked
 
       # --- Python (uv) variant ---
       # - uses: astral-sh/setup-uv@v3

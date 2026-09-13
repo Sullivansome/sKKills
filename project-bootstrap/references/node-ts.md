@@ -2,11 +2,11 @@
 
 ## Package manager
 
-Detect via lockfile: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, else npm. Prefer pnpm for new projects. Pin it via the `packageManager` field in package.json (`"packageManager": "pnpm@9.x.x"`) so corepack enforces it for everyone including CI.
+Detect via lockfile: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, else npm. Prefer pnpm for new projects. Pin the exact tested version in the `packageManager` field in package.json; do not use an `x.x` placeholder. Install that same version in CI. If using Corepack, verify it is installed and configured; newer Node releases do not necessarily bundle it.
 
 ## Format + lint: Biome (default) or ESLint + Prettier
 
-**Default to Biome** (`@biomejs/biome`) — one dependency, one config file, ~20x faster than ESLint+Prettier, and formatter/linter can't fight each other because they're the same tool:
+**For a new project, consider Biome** (`@biomejs/biome`) for integrated formatting and linting. Keep a working toolchain and check required framework rules before choosing:
 
 ```bash
 pnpm add -D -E @biomejs/biome

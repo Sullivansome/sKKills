@@ -1,5 +1,9 @@
 # Eval workspace (local test-run artifacts)
 project-bootstrap-workspace/
+*-workspace/
+.venv/
+__pycache__/
+*.pyc
 
 # OS noise
 .DS_Store

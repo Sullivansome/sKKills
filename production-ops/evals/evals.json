@@ -1,0 +1,25 @@
+{
+  "skill_name": "production-ops",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Errors spiked after deploy but the health endpoint is green. Help investigate; production reads are allowed, writes need approval, and we have customer emails in logs.",
+      "expected_output": "Read-only diagnosis followed by a bounded reviewable mitigation.",
+      "files": [],
+      "expectations": [
+        "Uses user-facing signals, version/configuration history, and redacted evidence.",
+        "Checks rollback compatibility and does not claim recovery from the health endpoint."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "We have backups and CPU alerts. Prepare an operational readiness plan for a nightly import service with a morning freshness deadline.",
+      "expected_output": "Task-based reliability signals and tested recovery plan.",
+      "files": [],
+      "expectations": [
+        "Defines a freshness/completion SLI and owner-agreed target instead of invented availability numbers.",
+        "Includes isolated restore verification and actionable alerts/runbooks."
+      ]
+    }
+  ]
+}

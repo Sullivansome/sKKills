@@ -1,71 +1,97 @@
 #!/usr/bin/env sh
-# install.sh — curl installer for releases published by this repo.
-# Usage:  curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/install.sh | sh
-#         VERSION=v1.2.3 sh install.sh        # pin a version
-#
-# FILL IN these three before shipping, and keep the asset naming scheme stable
-# forever — this script hard-codes it.
+# CLI tarball installer template. Fill in REPO and BIN before distribution.
+# Each tarball must contain exactly one regular nonempty file named BIN at its root.
+# Publish a sha256 checksums.txt alongside artifacts; verification is mandatory.
+# Usage: VERSION=v1.2.3 sh install.sh
+# A checksum from the same release detects corruption, not publisher compromise.
+set -eu
+
 REPO="OWNER/REPO"
 BIN="myapp"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
-set -eu
-
-need() { command -v "$1" >/dev/null 2>&1 || { echo "error: $1 is required" >&2; exit 1; }; }
-need curl; need uname
+die() { echo "error: $*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || die "$1 is required"; }
+[ "$REPO" != "OWNER/REPO" ] || die "configure REPO and BIN before distribution"
+case "$BIN" in ''|.*|*[!a-zA-Z0-9_-]*) die "invalid binary name" ;; esac
+for tool in curl uname awk tar mktemp cp chmod mv; do need "$tool"; done
+if command -v sha256sum >/dev/null 2>&1; then
+  checksum_tool=sha256sum
+elif command -v shasum >/dev/null 2>&1; then
+  checksum_tool=shasum
+else
+  die "sha256sum or shasum is required"
+fi
 
 os="$(uname -s)"
 arch="$(uname -m)"
 case "$arch" in
-  x86_64|amd64)  arch="x86_64" ;;
-  arm64|aarch64) arch="aarch64" ;;
-  *) echo "error: unsupported architecture: $arch" >&2; exit 1 ;;
+  x86_64|amd64) arch=x86_64 ;;
+  arm64|aarch64) arch=aarch64 ;;
+  *) die "unsupported architecture: $arch" ;;
+esac
+case "$os" in
+  Linux|Darwin) ;;
+  MINGW*|MSYS*|CYGWIN*) die "download the Windows installer from https://github.com/$REPO/releases" ;;
+  *) die "unsupported OS: $os" ;;
 esac
 
-# Resolve version (latest release unless VERSION is set).
+fetch() { curl --proto '=https' --tlsv1.2 -fsSL "$1" -o "$2"; }
+tmp="$(mktemp -d)"
+install_tmp=""
+cleanup() {
+  rm -rf "$tmp"
+  if [ -n "$install_tmp" ]; then rm -f "$install_tmp"; fi
+}
+trap cleanup 0
+trap 'exit 1' HUP INT TERM
+
 version="${VERSION:-}"
 if [ -z "$version" ]; then
-  version="$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
-    | grep '"tag_name"' | head -1 | cut -d '"' -f 4)"
-  [ -n "$version" ] || { echo "error: could not determine latest release" >&2; exit 1; }
+  fetch "https://api.github.com/repos/$REPO/releases/latest" "$tmp/release.json"
+  version="$(awk -F '"' '/"tag_name"[[:space:]]*:/ {print $4; exit}' "$tmp/release.json")"
 fi
-echo "Installing $BIN $version"
-
-# Pick the asset for this platform. Adjust names to match the release workflow.
-case "$os" in
-  Linux)
-    # Prefer the AppImage for desktop apps; use the binary tarball for CLIs.
-    asset="$BIN-$os-$arch.tar.gz" ;;
-  Darwin)
-    asset="$BIN-$os-$arch.tar.gz" ;;
-    # For a desktop app, you might instead download the .dmg and hdiutil attach it.
-  MINGW*|MSYS*|CYGWIN*)
-    echo "On Windows, download the .msi from:" >&2
-    echo "  https://github.com/$REPO/releases/download/$version/$BIN-$version-x86_64.msi" >&2
-    exit 1 ;;
-  *) echo "error: unsupported OS: $os" >&2; exit 1 ;;
-esac
-
+case "$version" in ''|.*|*[!a-zA-Z0-9._-]*) die "invalid or missing release version" ;; esac
+asset="$BIN-$os-$arch.tar.gz"
 base="https://github.com/$REPO/releases/download/$version"
-tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
+echo "Downloading $BIN $version ($os/$arch)..."
+fetch "$base/$asset" "$tmp/$asset"
+fetch "$base/checksums.txt" "$tmp/checksums.txt" || die "checksums.txt is required"
 
-echo "Downloading $asset..."
-curl -fsSL "$base/$asset" -o "$tmp/$asset"
-
-# Verify checksum — the release workflow must publish checksums.txt for this to work.
-if curl -fsSL "$base/checksums.txt" -o "$tmp/checksums.txt" 2>/dev/null; then
-  (cd "$tmp" && grep " $asset\$" checksums.txt | shasum -a 256 -c -) \
-    || { echo "error: checksum verification failed" >&2; exit 1; }
+# Parse an exact filename, rejecting missing/duplicate/malformed entries.
+expected="$(awk -v asset="$asset" '
+  { name=$2; sub(/^\*/, "", name) }
+  name == asset {
+    count++
+    if (NF != 2 || length($1) != 64 || $1 ~ /[^0-9a-fA-F]/) bad=1
+    digest=tolower($1)
+  }
+  END { if (count != 1 || bad) exit 1; print digest }
+' "$tmp/checksums.txt")" || die "expected exactly one valid checksum for $asset"
+if [ "$checksum_tool" = sha256sum ]; then
+  actual="$(sha256sum "$tmp/$asset")"
 else
-  echo "warning: no checksums.txt in release; skipping verification" >&2
+  actual="$(shasum -a 256 "$tmp/$asset")"
 fi
+actual="${actual%% *}"
+[ "$actual" = "$expected" ] || die "checksum verification failed"
+
+# Stream only the selected regular member to a file we own. Never extract paths.
+tar -tzf "$tmp/$asset" > "$tmp/members" || die "invalid tarball"
+[ "$(cat "$tmp/members")" = "$BIN" ] || die "tarball must contain only $BIN at archive root"
+[ "$(awk 'END {print NR}' "$tmp/members")" = 1 ] || die "duplicate archive members"
+tar -tvzf "$tmp/$asset" > "$tmp/member-types" || die "invalid tarball metadata"
+case "$(cat "$tmp/member-types")" in -*) ;; *) die "binary must be a regular file" ;; esac
+tar -xzOf "$tmp/$asset" "$BIN" > "$tmp/binary" || die "could not read binary"
+[ -s "$tmp/binary" ] || die "binary is empty"
 
 mkdir -p "$INSTALL_DIR"
-tar -xzf "$tmp/$asset" -C "$tmp"
-install -m 755 "$tmp/$BIN" "$INSTALL_DIR/$BIN" 2>/dev/null \
-  || cp "$tmp/$BIN" "$INSTALL_DIR/$BIN" && chmod 755 "$INSTALL_DIR/$BIN"
-
+[ ! -d "$INSTALL_DIR/$BIN" ] || die "destination is a directory"
+install_tmp="$(mktemp "$INSTALL_DIR/.$BIN.XXXXXX")"
+cp "$tmp/binary" "$install_tmp"
+chmod 755 "$install_tmp"
+mv -f "$install_tmp" "$INSTALL_DIR/$BIN"
+install_tmp=""
 echo "Installed $BIN to $INSTALL_DIR/$BIN"
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;

@@ -1,0 +1,25 @@
+{
+  "skill_name": "architecture-design",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Design order processing where payment webhooks can be delivered repeatedly and our database commits can fail. We have one app and Postgres; no proven scaling problem.",
+      "expected_output": "A small design with explicit transaction and external-effect boundaries.",
+      "files": [],
+      "expectations": [
+        "Defines durable idempotency and crash-after-commit behavior.",
+        "Does not add a queue/service solely for hypothetical scale or promise exactly-once from delivery semantics."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Our mobile clients stay offline for days and cannot all update together. Design an API field change from full_name to structured names.",
+      "expected_output": "Compatible old/new contracts and offline conflict semantics.",
+      "files": [],
+      "expectations": [
+        "Accounts for old clients, data conversion ambiguity, and rollout coexistence.",
+        "Identifies irreversible data transformations and validation evidence."
+      ]
+    }
+  ]
+}

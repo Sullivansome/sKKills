@@ -44,21 +44,21 @@ This is the ecosystem standard and stores hooks in the repo (`.pre-commit-config
 
 ```yaml
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.9
+  - repo: local
     hooks:
-      - id: ruff
-        args: [--fix]
+      - id: ruff-check
+        name: Ruff lint
+        entry: uv run --locked ruff check
+        language: system
+        types_or: [python, pyi]
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        pass_filenames: false   # mypy needs the whole project, not staged files
-        args: [src]
+        name: Ruff format check
+        entry: uv run --locked ruff format --check
+        language: system
+        types_or: [python, pyi]
 ```
 
-Mypy with `pass_filenames: false` can be slow on big projects — if it exceeds ~10s, move it to `stages: [pre-push]`.
+These hooks use the same locked tools as CI. Adapt the launcher for an existing Poetry/pip environment. Run whole-project mypy in CI or pre-push; add it to pre-commit only if measured fast enough. Remote hook environments are an alternative, but their versions and typing dependencies must match the project.
 
 ## CI notes
 

@@ -9,8 +9,8 @@
     },
     {
       "id": 1,
-      "prompt": "I have an existing Node/TypeScript CLI project in this directory — package.json exists with a couple of deps and a build script, but there's zero tooling. Add linting, formatting, type checking, a pre-commit hook, and GitHub CI. Don't restructure my code.",
-      "expected_output": "Adds biome (or eslint+prettier), tsc --noEmit script, vitest placeholder or notes, husky+lint-staged hook, and a CI workflow — without touching existing source files or build config.",
+      "prompt": "I have an existing Node/TypeScript CLI project in this directory \u2014 package.json exists with a couple of deps and a build script, but there's zero tooling. Add linting, formatting, type checking, a pre-commit hook, and GitHub CI. Don't restructure my code.",
+      "expected_output": "Adds compatible lint/format/typecheck tooling, a meaningful test if a runner is added (or explicitly reports missing tests), a staged-content-safe hook, and real CI checks without restructuring source or replacing the build.",
       "files": []
     },
     {
@@ -34,8 +34,18 @@
     {
       "id": 5,
       "prompt": "Set up my Kotlin Android app repo properly: ktlint, detekt, pre-commit hook, CI that runs lint and unit tests, and a release flow that builds a signed APK from the git tag and attaches it to a GitHub release.",
-      "expected_output": "ktlint + detekt gradle plugins configured, hook running ktlintFormat/detekt, CI with setup-java + setup-gradle running ktlintCheck/detekt/lint/testDebugUnitTest/assembleDebug, tag-triggered release workflow deriving versionName from the tag, signing via keystore secrets, uploading the APK.",
+      "expected_output": "ktlint + detekt gradle plugins configured, staged-content-safe non-mutating hook with measured runtime, CI with setup-java + setup-gradle running ktlintCheck/detekt/lint/testDebugUnitTest/assembleDebug, tag-triggered release workflow deriving versionName from the tag, signing via keystore secrets, uploading the APK.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Add hooks and CI to my existing Swift project. I have partly staged Swift files and unrelated staged README edits. Verify the hook without creating commits in this repo.",
+      "expected_output": "Pinned staged-content-aware non-mutating checks, isolated hook verification, no blanket staging, real CI commands.",
+      "files": [],
+      "expectations": [
+        "Preserves partial staging and unrelated work.",
+        "Verifies formatting/lint failures produce nonzero exit codes without committing in the user repository."
+      ]
     }
   ]
 }

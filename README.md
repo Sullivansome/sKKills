@@ -1,79 +1,79 @@
-# project-bootstrap
+# sKKills
 
-An [agent skill](https://skills.sh) that gives AI coding agents a complete, opinionated-but-flexible development workflow setup: **scaffolding → lint/format/typecheck → pre-commit hooks → GitHub Actions CI → tag-driven releases**.
+Practical agent skills for high-quality software in the AI coding era: discover → design → build → verify → deliver → operate → evolve → retire.
 
-One sentence to your agent — *"set up this repo properly"* — and you get fast local checks, CI that runs the exact same commands, and a release pipeline that's one `git tag` away.
+The collection originally contained only `project-bootstrap`. It now contains **11 focused skills**. They cover the major lifecycle workflows while leaving framework-specific implementation to the project's tooling and available specialist skills. Coverage is guidance, not certification or proof that a project is production-ready.
 
-## What it sets up
+## Choose a skill
 
-| Concern | Approach |
+| Skill | Use it for |
 |---|---|
-| **Command contract** | `format` / `lint` / `typecheck` / `test` / `build` — same commands locally and in CI, no drift |
-| **Pre-commit hooks** | Fast checks on staged files only (lint-staged, pre-commit framework, or plain git hooks). Slow stuff goes to CI or pre-push — slow hooks train people to use `--no-verify` |
-| **CI** | GitHub Actions running the identical command contract, with proper dependency caching |
-| **Releases** | Push `v*` tag → matrix builds → GitHub Release with installers/binaries + checksums |
-| **Curl install** | `install.sh` template: OS/arch detection, latest-release resolution, checksum verification, no-sudo install |
+| [software-lifecycle](software-lifecycle/SKILL.md) | Assess gaps and route broad work to the next relevant phase |
+| [product-spec](product-spec/SKILL.md) | User outcomes, discovery, acceptance criteria, useful delivery slices |
+| [architecture-design](architecture-design/SKILL.md) | Boundaries, data/API contracts, tradeoffs, failure modes, ADRs |
+| [project-bootstrap](project-bootstrap/SKILL.md) | Reproducible tooling, staged-file hooks, real CI checks, initial release automation |
+| [ai-implementation](ai-implementation/SKILL.md) | Grounded coding, debugging, refactoring, verification of generated changes |
+| [software-verification](software-verification/SKILL.md) | Risk-based tests, correctness review, accessibility, performance, regressions |
+| [security-review](security-review/SKILL.md) | Threat modeling, authorization, data, dependencies, agent trust boundaries |
+| [release-delivery](release-delivery/SKILL.md) | Artifacts, deployment readiness, staged rollout, feasible recovery |
+| [production-ops](production-ops/SKILL.md) | Observability, SLOs, incidents, capacity/cost, runbooks, restore drills |
+| [software-evolution](software-evolution/SKILL.md) | Upgrades, migrations, debt, deprecation, retirement |
+| [ai-evaluation](ai-evaluation/SKILL.md) | Quality, grounding, permissions, cost, latency of AI-powered features |
 
-## Supported stacks
+Use a focused skill for a focused task. A typo does not need a PRD; a stateful production change needs more than a green unit test. `software-lifecycle` routes broad requests and works even when only part of this collection is installed.
 
-The skill detects your stack from marker files (framework markers checked before generic ones) and loads only the relevant reference:
+## What “AI coding era” means here
 
-| Stack | Detected by | Tooling | Release |
-|---|---|---|---|
-| **Node / TypeScript** | `package.json` | Biome (or ESLint+Prettier), tsc, vitest, husky+lint-staged | — |
-| **Next.js** | `next.config.*` | eslint-config-next / Biome, tsc | deploy-oriented |
-| **TanStack** Start/Router/Query | `@tanstack/*` deps | Biome, vitest (generated route-tree gotchas covered) | deploy-oriented |
-| **Electron** | `electron` deps | Node toolchain + electron-builder | **dmg / msi / AppImage** |
-| **Tauri** | `Cargo.toml`, `src-tauri/` | rustfmt, clippy + frontend toolchain | **dmg / msi / AppImage** via `tauri-action` |
-| **Wails** | `wails.json` | gofmt, golangci-lint + frontend toolchain | dmg / exe / AppImage (manual matrix) |
-| **Python** | `pyproject.toml`, `uv.lock` | uv, ruff, mypy, pytest, pre-commit | binaries + curl installer |
-| **Kotlin / Android** | `build.gradle.kts` | ktlint, detekt, Android lint (Gradle plugins) | signed APK/AAB from tag |
-| **Swift — iOS / macOS** | `Package.swift`, `*.xcodeproj` | SwiftFormat, SwiftLint, xcodebuild | **notarized dmg** (macOS), TestFlight (iOS) |
-| **Go** | `go.mod` | gofmt, go vet, golangci-lint | binaries + curl installer |
+- Read the repository and verify real APIs before generating a solution.
+- Keep changes small and preserve unrelated user work.
+- Treat retrieved text, logs, and generated output as untrusted at tool boundaries.
+- Verify behavior independently of the implementation; do not weaken tests to make generated code pass.
+- Distinguish authored tests, executed checks, unavailable checks, and observed production results.
+- Design for retries, old clients, data compatibility, recovery, ownership, and eventual removal.
+- Evaluate AI product behavior separately from ordinary software correctness, with isolated tools and held-out cases.
 
-## Install
+The [coverage audit](docs/lifecycle-coverage.md) records the initial gaps, additions, bootstrap corrections, sources, and limits.
 
-Using the [skills.sh](https://skills.sh) CLI (symlinks into all detected agents):
+## Install and use
+
+From this checkout, install through the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-# from a GitHub repo
+npx skills add .
+```
+
+Choose the skills and agents in the install flow. A remote install uses the version published in the remote repository, so local changes must be published before they appear there:
+
+```bash
 npx skills add Sullivansome/sKKills
-
-# or from a local checkout (what we use for development)
-npx skills add ./project-bootstrap -g -a '*' -s '*' -y
 ```
 
-Works with Claude Code, Kimi Code CLI, Cursor, Codex, OpenCode, and 50+ other agents.
+Example requests:
 
-## Use
+- “Audit this service's lifecycle gaps before our first paid launch.”
+- “Implement this issue, preserve my staged edits, and verify the failure path.”
+- “Plan a zero-downtime schema migration while old clients remain supported.”
+- “Our release caused errors. Diagnose it and prepare a compatible mitigation.”
+- “Evaluate a cheaper model without letting the test agent place real orders.”
+- “Retire this service, accounting for consumers, retained data, credentials, and billing.”
 
-Just ask your agent naturally:
+## Bootstrap stack coverage
 
-- *"Scaffold a new Tauri app with React and set up everything — linting, hooks, CI, releases."*
-- *"Add pre-commit hooks and CI to this repo. Don't restructure my code."*
-- *"Set up a release pipeline that builds a signed APK when I push a tag."*
+The existing bootstrap references support Node/TypeScript, Next.js, TanStack, Electron, Rust/Tauri, Go/Wails, Python, Kotlin/Android, and Swift/iOS/macOS. They are adaptation guidance: inspect installed versions and verify official documentation before copying version-sensitive commands. CI templates intentionally require adaptation; the CLI installer requires a configured repository and mandatory checksums.
 
-## Repo structure
+## Validate and improve the collection
 
-```
-project-bootstrap/
-├── SKILL.md                        # router: stack detection + 7-step workflow
-├── references/                     # loaded per-stack (progressive disclosure)
-│   ├── node-ts.md  nextjs.md  tanstack.md  electron.md
-│   ├── rust-tauri.md  wails.md  python.md
-│   ├── kotlin-android.md  swift-apple.md
-│   └── release.md                  # tag-driven releases, installers, curl script
-├── assets/
-│   ├── workflows/ci.yml            # CI template (Node/Rust/Python variants)
-│   ├── workflows/release-tauri.yml # dmg/msi/AppImage matrix template
-│   └── install.sh                  # curl-install template with checksum verification
-└── evals/evals.json                # test prompts used to evaluate the skill
+Use Python 3.9+ in a local environment:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python scripts/validate_skills.py
+.venv/bin/python -m unittest discover -s tests -v
 ```
 
-## Principles baked in
+Each skill includes realistic prompts and expected outcomes in `evals/evals.json`. Structural validation checks metadata, local links, and eval data; installer tests exercise success and failure behavior without network access. These checks do **not** prove skill effectiveness. The [evaluation record](docs/evaluation-results.md) distinguishes executed behavioral samples from cases authored for future testing.
 
-- **Pin tool versions** — lockfiles, `rust-toolchain.toml`, `packageManager` field. Version skew is the #1 "works on my machine" cause.
-- **Fast tools beat configurable tools** — Biome over ESLint+Prettier, Ruff over flake8+black — unless the project already has a working setup. Never churn existing configs uninvited.
-- **Formatter and linter are separate concerns** — configured so they never fight.
-- **Tags, not buttons** — pushing `v1.2.3` is the release trigger; the tag is the audit trail and the single source of truth for the version.
-- **Verify, don't assume** — the skill makes the agent actually run the checks before declaring done, and dry-run what it can of the release pipeline.
+The [validation workflow](.github/workflows/validate.yml) runs the same commands on Linux and macOS after pushes to `main` and on pull requests. Hosted results are only available after the changes are pushed.
+
+When adding a skill, keep its trigger distinct, preserve user scope and authorization, include only instructions that change decisions, and validate a realistic case. Keep provider-specific details in references and use current primary documentation. Avoid adding a new skill when a focused reference in an existing one is sufficient.

@@ -19,12 +19,9 @@ Also add the **Gradle wrapper validation** action in CI (`gradle/actions/wrapper
 
 ## Pre-commit
 
-Kotlin projects usually use a plain git hook calling gradle, since the hooks must live in the repo to be shared. Two workable options:
+Use staged-file checks supported by the pinned tools, or a staged-content-aware framework with non-mutating Gradle checks such as `./gradlew ktlintCheck`. Verify partial staging and failure exit codes in an isolated fixture. Do not call whole-worktree `ktlintFormat` from a plain commit hook or assume incremental Gradle tasks are fast enough.
 
-1. **Simple**: `.git/hooks/pre-commit` script (installed via a gradle task that copies from `scripts/pre-commit`) running `./gradlew ktlintFormat detekt` — fast enough because both are incremental.
-2. If the team is polyglot, the `pre-commit` framework with system hooks calling the same gradle tasks.
-
-Don't run `lint` or tests in pre-commit — Android lint and unit tests are too slow for the commit path.
+Measure runtime; whole-project detekt, Android lint, builds, and tests generally belong in CI or pre-push. Keep formatter fixes as an explicit developer command rather than silently changing unstaged content.
 
 ## CI
 
@@ -35,7 +32,7 @@ Don't run `lint` or tests in pre-commit — Android lint and unit tests are too 
 - run: ./gradlew ktlintCheck detekt lint testDebugUnitTest assembleDebug
 ```
 
-`setup-gradle`'s dependency caching is the difference between a 3-minute and a 12-minute build — don't hand-roll `actions/cache` for Gradle.
+Prefer `setup-gradle`'s supported dependency caching and verify its behavior with the chosen action version; measure performance instead of assuming a fixed speedup.
 
 ## Release
 

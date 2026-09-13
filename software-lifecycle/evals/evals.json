@@ -1,0 +1,25 @@
+{
+  "skill_name": "software-lifecycle",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "This repo has lint and tests. Audit what is missing before we launch a paid team workspace, then implement local readiness docs. We have no production access here.",
+      "expected_output": "Evidence-based lifecycle gaps with scoped local improvements.",
+      "files": [],
+      "expectations": [
+        "Separates existing checks from unverified production readiness.",
+        "Routes identity/data/delivery/operations gaps and does not claim a deployment."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Fix the typo in our settings page heading; do we need the whole quality lifecycle for this?",
+      "expected_output": "A proportional response and direct small fix if files are available.",
+      "files": [],
+      "expectations": [
+        "Does not impose a PRD, ADR, threat model, or new framework for a typo.",
+        "States any unavailable file evidence instead of inventing a completed edit."
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 # Tauri release: tag push v* -> draft GitHub Release with dmg / msi / AppImage.
 # Requires: pnpm (or adapt install/build steps), src-tauri/tauri.conf.json.
 # Optional secrets for signing: TAURI_SIGNING_PRIVATE_KEY(+_PASSWORD), APPLE_* (see references/release.md).
+# Adapt runtime/toolchain versions; resolve action refs to verified SHAs before production use.
 name: Release
 
 on:
@@ -9,13 +10,16 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14        # Apple Silicon -> dmg
+          - os: macos-15        # Apple Silicon -> dmg
             target: aarch64-apple-darwin
-          - os: macos-13        # Intel -> dmg
+          - os: macos-15-intel  # Intel -> dmg
             target: x86_64-apple-darwin
           - os: windows-latest  # -> msi (+ nsis exe if configured)
             target: x86_64-pc-windows-msvc
@@ -39,9 +43,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
+      # rustup reads the exact tested version from rust-toolchain.toml.
+      - run: rustup show active-toolchain
+      - run: rustup target add ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
 
       - uses: tauri-apps/tauri-action@v0
@@ -57,7 +61,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: "v${{ github.ref_name }}"
+          releaseName: "${{ github.ref_name }}"
           releaseBody: "See the assets below."
           releaseDraft: true
           prerelease: false
