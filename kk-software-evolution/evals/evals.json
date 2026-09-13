@@ -1,0 +1,25 @@
+{
+  "skill_name": "kk-software-evolution",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Rename a money field while old desktop clients keep writing for 90 days. Jobs retry on a shared queue. Prepare the migration without running it.",
+      "expected_output": "Expand/migrate/contract with concurrent-write and retry-safe transition.",
+      "files": [],
+      "expectations": [
+        "Covers old/new writers, exact units, resumable backfill, and invariant reconciliation.",
+        "States code/data rollback limits and preserves the compatibility window."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Retire our unused legacy API. Logs cover only 7 days but quarterly jobs may call it, and retention requirements for exports are unknown. Draft the execution plan only.",
+      "expected_output": "Dependency-aware reversible retirement with unresolved data disposition.",
+      "files": [],
+      "expectations": [
+        "Does not infer no consumers from seven days or delete retained data.",
+        "Includes credentials, queues/jobs, DNS, backups, billing, and verification before cleanup."
+      ]
+    }
+  ]
+}

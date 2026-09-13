@@ -1,0 +1,23 @@
+{
+  "skill": "kk-distribution",
+  "date": "2026-09-13",
+  "case_ids": [0],
+  "method": "One independent agent received the skill, relevant references, raw release inventory, and assessment-only prompt. It did not receive expected outcomes, grading expectations, or prior conclusions. The primary agent reviewed the resulting assessment against the six authored expectations.",
+  "response_excerpts": [
+    "MapleDesk 2.4.0 is **blocked for the entire requested release**. All three platforms must pass together; the supplied inventory identifies signing and trust failures on every platform.",
+    "Verify nested code, identities and timestamps; sign the DMG with Developer ID Application; complete notarization and stapling.",
+    "Establish and test trusted package verification **before any package script executes**. Merely attaching signatures, or adding checks inside the package script, does not authenticate that script.",
+    "A key obtained alongside downloads does not independently establish trust. APT’s authenticated metadata/hash chain and the detached `.deb` signature serve different verification paths.",
+    "After approved signing access is available, finish all byte-changing operations before final digests and detached signatures. Bind product, version, platform, architecture, filenames and digests in the signed manifest.",
+    "I have not independently verified signatures, inspected artifacts, tested clients or contacted any external service. No files were edited, signed or published; the inventory reports publication as **none**."
+  ],
+  "reviewer_grades": [
+    {"expectation": "Aggregate publication blocked", "pass": true, "evidence": "Blocked all three requested targets together."},
+    {"expectation": "macOS native/container/notary/updater distinction", "pass": true, "evidence": "Identified unsigned DMG and missing notarization; updater signature does not replace either."},
+    {"expectation": "Chocolatey wrapper/script/pre-execution trust", "pass": true, "evidence": "Required final script and wrapper signatures plus trusted verification before scripts and MSI execution."},
+    {"expectation": "No unsupported Chocolatey signature-enforcement claim", "pass": true, "evidence": "Treated client enforcement as unestablished and blocked the channel until the verification contract is demonstrated."},
+    {"expectation": "Linux artifact/repository/key trust distinction", "pass": true, "evidence": "Required signed payloads and APT metadata, independently provisioned keys and direct-download verification."},
+    {"expectation": "Final bytes, signed context and truthful unavailable checks", "pass": true, "evidence": "Required final-byte signatures and product/version/platform/architecture manifest; explicitly reported no actual signing or installation."}
+  ],
+  "limitations": "Assessment-only synthetic sample, one run, no baseline comparison. This does not establish automatic routing reliability, native signing correctness, hosted CI success, channel acceptance, or real installation. Remaining three distribution cases and added routing cases were authored but not executed. Excerpts above are not a full transcript."
+}

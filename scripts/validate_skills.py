@@ -35,8 +35,8 @@ def validate(root=ROOT):
             continue
         name = meta.get('name')
         if (not isinstance(name, str) or len(name) > 64
-                or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', name)):
-            errors.append(f'{label}: invalid name')
+                or not re.fullmatch(r'kk-[a-z0-9]+(?:-[a-z0-9]+)*', name)):
+            errors.append(f'{label}: name must use the kk- prefix and lowercase hyphenated words')
         elif name != path.parent.name or name in names:
             errors.append(f'{label}: name must be unique and match directory')
         else:
@@ -69,9 +69,9 @@ def validate(root=ROOT):
                 for item in files:
                     if not (path.parent / item).is_file():
                         raise ValueError(f'missing fixture: {item}')
-                checks = case.get('expectations', [])
-                if not isinstance(checks, list) or any(not isinstance(x, str) or not x.strip() for x in checks):
-                    raise ValueError('invalid expectations')
+                checks = case.get('expectations')
+                if not isinstance(checks, list) or not checks or any(not isinstance(x, str) or not x.strip() for x in checks):
+                    raise ValueError('expected at least one nonempty grading expectation')
             case_count += len(cases)
         except (OSError, ValueError, KeyError, TypeError) as exc:
             errors.append(f'{ep.relative_to(root)}: {exc}')
@@ -91,8 +91,42 @@ def validate(root=ROOT):
             target = (path.parent / unquote(url.path)).resolve()
             if not target.exists():
                 errors.append(f'{path.relative_to(root)}: broken link {link}')
+        # Resource paths in code spans are also declarations in skill prose.
+        # Resolve references/assets from the owning skill root, including in references.
+        relative = path.relative_to(root)
+        if relative.parts[0] in names:
+            owner = root / relative.parts[0]
+            for resource in re.findall(r'`((?:references|assets)/[^`\s]+)`', path.read_text()):
+                if not (owner / resource).exists():
+                    errors.append(f'{relative}: missing bundled resource {resource}')
+    try:
+        routing = json.loads((root / 'evals/routing.json').read_text())['cases']
+        if not isinstance(routing, list) or not routing:
+            raise ValueError('expected nonempty routing cases')
+        ids, positives, negatives = set(), set(), set()
+        for case in routing:
+            cid, prompt, primary = case['id'], case['prompt'], case['expected_primary']
+            if type(cid) is not int or cid in ids:
+                raise ValueError('routing ids must be unique integers')
+            ids.add(cid)
+            if not isinstance(prompt, str) or not prompt.strip():
+                raise ValueError('routing prompt must be nonempty')
+            if primary is not None and (not isinstance(primary, str) or primary not in names):
+                raise ValueError(f'unknown primary skill {primary!r}')
+            excluded = case['not_primary']
+            if not isinstance(excluded, list) or any(not isinstance(n, str) or n not in names for n in excluded):
+                raise ValueError('not_primary must contain known skill names')
+            if primary in excluded:
+                raise ValueError('primary skill is also excluded')
+            if primary:
+                positives.add(primary)
+            negatives.update(excluded)
+        if names - positives or names - negatives:
+            raise ValueError(f'each skill needs positive and negative routing coverage; missing positives={sorted(names - positives)}, negatives={sorted(names - negatives)}')
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        errors.append(f'evals/routing.json: {exc}')
     workflows = [*root.glob('.github/workflows/*.yml'),
-                 *root.glob('project-bootstrap/assets/workflows/*.yml')]
+                 *root.glob('kk-project-bootstrap/assets/workflows/*.yml')]
     for path in workflows:
         try:
             # BaseLoader avoids YAML 1.1 interpreting the Actions "on" key as True.
@@ -110,4 +144,4 @@ if __name__ == '__main__':
         print(problem, file=sys.stderr)
     if problems:
         sys.exit(1)
-    print(f'Validated {skill_count} skills, {eval_count} authored eval cases, and local Markdown links. Agent evals were not executed by this check.')
+    print(f'Validated {skill_count} kk- skills, {eval_count} authored behavioral cases, routing coverage, resource links, and workflow YAML. Agent evals were not executed by this check.')

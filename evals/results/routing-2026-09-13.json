@@ -1,0 +1,311 @@
+{
+  "date": "2026-09-13",
+  "method": "Two independent description-only lead-skill selection passes; no skill bodies or expected labels were supplied. Identifiers were normalized to kk- for both catalogs. This is not runtime automatic triggering.",
+  "cases": "../routing.json",
+  "prompt_sha256": "aac204d290c869a25a3b72f63396d2d780a7da65929807f476432fb064309372",
+  "runs": [
+    {
+      "catalog": "original",
+      "descriptions": [
+        {
+          "name": "kk-ai-evaluation",
+          "description": "Design and run evaluations for LLM features, RAG systems, prompts, models, and tool-using agents, including quality, grounding, permissions, regressions, latency, and cost. Use when changing AI behavior or deciding whether an AI feature is ready to ship; ordinary AI-written code uses normal software verification."
+        },
+        {
+          "name": "kk-ai-implementation",
+          "description": "Implement a feature, fix a bug, or refactor existing code with a disciplined AI-assisted workflow of repository grounding, small changes, hypothesis-driven debugging, and evidence-based verification. Use for substantive coding work, especially unfamiliar code or unreliable generated changes."
+        },
+        {
+          "name": "kk-architecture-design",
+          "description": "Design or review system boundaries, API and event contracts, data models, and consequential technical decisions. Use for new services, major features, integrations, or architectural changes involving compatibility, reliability, security, or scale."
+        },
+        {
+          "name": "kk-product-spec",
+          "description": "Turn a product idea, feature request, or ambiguous issue into an evidence-based scope with user journeys, acceptance criteria, constraints, and small delivery slices. Use before substantial work when the intended behavior or value is unclear; skip for already-specified fixes."
+        },
+        {
+          "name": "kk-production-ops",
+          "description": "Improve production observability, reliability, capacity, cost, runbooks, and disaster recovery, or diagnose and respond to a live incident. Use for SLOs, actionable alerts, outages, operational readiness, restore drills, and recurring operational toil."
+        },
+        {
+          "name": "kk-project-bootstrap",
+          "description": "Scaffold a repository or set up reproducible development tooling, formatting, linting, type checks, hooks, CI, and initial artifact release pipelines. Covers web, desktop, mobile, and CLI stacks. Use for missing or broken project setup and build automation; use release-delivery for production rollout and recovery decisions."
+        },
+        {
+          "name": "kk-release-delivery",
+          "description": "Prepare or execute a reliable software release or deployment with artifact verification, environment checks, staged rollout, migration compatibility, and recovery criteria. Use for production delivery, release readiness, deployment automation, or rollback planning beyond initial CI setup."
+        },
+        {
+          "name": "kk-security-review",
+          "description": "Threat-model or review application, infrastructure, dependency, and AI-agent trust boundaries; implement scoped mitigations and security regression tests when requested. Use for sensitive data, authentication/authorization changes, exposed APIs, supply-chain risks, or security readiness reviews."
+        },
+        {
+          "name": "kk-software-evolution",
+          "description": "Maintain and evolve existing software through dependency upgrades, API/schema/data migrations, debt reduction, deprecation, and service retirement. Use when compatibility, persisted data, existing consumers, or end-of-life obligations make a change more than a local refactor."
+        },
+        {
+          "name": "kk-software-lifecycle",
+          "description": "Assess lifecycle gaps or coordinate software work across discovery, design, implementation, verification, delivery, operations, evolution, and retirement. Use for engineering readiness reviews or an end-to-end quality workflow; use a focused skill for a narrow task."
+        },
+        {
+          "name": "kk-software-verification",
+          "description": "Build a risk-based test strategy, review code for correctness, or verify a substantial change before release. Use for missing test coverage, regression prevention, flaky tests, acceptance validation, or an evidence-based quality review of AI-generated code."
+        }
+      ],
+      "selections": [
+        {
+          "id": 0,
+          "primary": "kk-software-lifecycle"
+        },
+        {
+          "id": 1,
+          "primary": "kk-software-lifecycle"
+        },
+        {
+          "id": 2,
+          "primary": "kk-product-spec"
+        },
+        {
+          "id": 3,
+          "primary": "kk-product-spec"
+        },
+        {
+          "id": 4,
+          "primary": "kk-architecture-design"
+        },
+        {
+          "id": 5,
+          "primary": "kk-architecture-design"
+        },
+        {
+          "id": 6,
+          "primary": "kk-project-bootstrap"
+        },
+        {
+          "id": 7,
+          "primary": "kk-project-bootstrap"
+        },
+        {
+          "id": 8,
+          "primary": "kk-ai-implementation"
+        },
+        {
+          "id": 9,
+          "primary": "kk-ai-implementation"
+        },
+        {
+          "id": 10,
+          "primary": "kk-software-verification"
+        },
+        {
+          "id": 11,
+          "primary": "kk-software-verification"
+        },
+        {
+          "id": 12,
+          "primary": "kk-security-review"
+        },
+        {
+          "id": 13,
+          "primary": "kk-security-review"
+        },
+        {
+          "id": 14,
+          "primary": "kk-release-delivery"
+        },
+        {
+          "id": 15,
+          "primary": "kk-release-delivery"
+        },
+        {
+          "id": 16,
+          "primary": "kk-production-ops"
+        },
+        {
+          "id": 17,
+          "primary": "kk-production-ops"
+        },
+        {
+          "id": 18,
+          "primary": "kk-software-evolution"
+        },
+        {
+          "id": 19,
+          "primary": "kk-software-evolution"
+        },
+        {
+          "id": 20,
+          "primary": "kk-ai-evaluation"
+        },
+        {
+          "id": 21,
+          "primary": "kk-ai-evaluation"
+        },
+        {
+          "id": 22,
+          "primary": null
+        },
+        {
+          "id": 23,
+          "primary": null
+        }
+      ],
+      "matched_expected_primary": 24,
+      "total": 24
+    },
+    {
+      "catalog": "revised",
+      "descriptions": [
+        {
+          "name": "kk-ai-evaluation",
+          "description": "Design and run evaluations for LLM features, RAG systems, prompts, models, and tool-using agents, including quality, grounding, permissions, regressions, latency, and cost. Use when changing AI behavior or deciding whether an AI feature is ready to ship; ordinary AI-written code uses normal software verification."
+        },
+        {
+          "name": "kk-ai-implementation",
+          "description": "Carry out a scoped code change or debug a concrete defect when the requested behavior is established. Ground edits in the repository and verify the resulting diff. Use for implementation, not review-only correctness/readiness questions, threat modeling, architectural decisions, or compatibility and data-migration planning."
+        },
+        {
+          "name": "kk-architecture-design",
+          "description": "Design or review system boundaries, new API/event contracts, data models, and consequential technical choices. Use for new services or structural design decisions; use kk-software-evolution to plan changes constrained by existing data or supported consumers."
+        },
+        {
+          "name": "kk-product-spec",
+          "description": "Turn a product idea, feature request, or ambiguous issue into an evidence-based scope with user journeys, acceptance criteria, constraints, and small delivery slices. Use before substantial work when the intended behavior or value is unclear; skip for already-specified fixes."
+        },
+        {
+          "name": "kk-production-ops",
+          "description": "Improve production observability, reliability, capacity, cost, runbooks, and disaster recovery, or diagnose and respond to a live incident. Use for SLOs, actionable alerts, outages, operational readiness, restore drills, and recurring operational toil."
+        },
+        {
+          "name": "kk-project-bootstrap",
+          "description": "Scaffold a repository or set up reproducible development tooling, formatting, linting, type checks, hooks, CI, and initial artifact release pipelines. Covers web, desktop, mobile, and CLI stacks. Use for missing or broken project setup and build automation; use kk-release-delivery for production rollout and recovery decisions."
+        },
+        {
+          "name": "kk-release-delivery",
+          "description": "Prepare or execute a reliable software release or deployment with artifact verification, environment checks, staged rollout, migration compatibility, and recovery criteria. Use for production delivery, release readiness, deployment automation, or rollback planning beyond initial CI setup."
+        },
+        {
+          "name": "kk-security-review",
+          "description": "Threat-model or review application, infrastructure, dependency, and AI-agent trust boundaries; implement scoped mitigations and security regression tests when requested. Use for sensitive data, authentication/authorization changes, exposed APIs, supply-chain risks, or security readiness reviews."
+        },
+        {
+          "name": "kk-software-evolution",
+          "description": "Maintain and evolve existing software through dependency upgrades, API/schema/data migrations, debt reduction, deprecation, and service retirement. Use when compatibility, persisted data, existing consumers, or end-of-life obligations make a change more than a local refactor."
+        },
+        {
+          "name": "kk-software-lifecycle",
+          "description": "Assess lifecycle gaps or coordinate software work across discovery, design, implementation, verification, delivery, operations, evolution, and retirement. Use for engineering readiness reviews or an end-to-end quality workflow; use a focused skill for a narrow task."
+        },
+        {
+          "name": "kk-software-verification",
+          "description": "Build a risk-based test strategy, review code for correctness, or verify a substantial change before release. Use for missing test coverage, regression prevention, flaky tests, acceptance validation, or an evidence-based quality review of AI-generated code."
+        }
+      ],
+      "selections": [
+        {
+          "id": 0,
+          "primary": "kk-software-lifecycle"
+        },
+        {
+          "id": 1,
+          "primary": "kk-software-lifecycle"
+        },
+        {
+          "id": 2,
+          "primary": "kk-product-spec"
+        },
+        {
+          "id": 3,
+          "primary": "kk-product-spec"
+        },
+        {
+          "id": 4,
+          "primary": "kk-architecture-design"
+        },
+        {
+          "id": 5,
+          "primary": "kk-architecture-design"
+        },
+        {
+          "id": 6,
+          "primary": "kk-project-bootstrap"
+        },
+        {
+          "id": 7,
+          "primary": "kk-project-bootstrap"
+        },
+        {
+          "id": 8,
+          "primary": "kk-ai-implementation"
+        },
+        {
+          "id": 9,
+          "primary": "kk-ai-implementation"
+        },
+        {
+          "id": 10,
+          "primary": "kk-software-verification"
+        },
+        {
+          "id": 11,
+          "primary": "kk-software-verification"
+        },
+        {
+          "id": 12,
+          "primary": "kk-security-review"
+        },
+        {
+          "id": 13,
+          "primary": "kk-security-review"
+        },
+        {
+          "id": 14,
+          "primary": "kk-release-delivery"
+        },
+        {
+          "id": 15,
+          "primary": "kk-release-delivery"
+        },
+        {
+          "id": 16,
+          "primary": "kk-production-ops"
+        },
+        {
+          "id": 17,
+          "primary": "kk-production-ops"
+        },
+        {
+          "id": 18,
+          "primary": "kk-software-evolution"
+        },
+        {
+          "id": 19,
+          "primary": "kk-software-evolution"
+        },
+        {
+          "id": 20,
+          "primary": "kk-ai-evaluation"
+        },
+        {
+          "id": 21,
+          "primary": "kk-ai-evaluation"
+        },
+        {
+          "id": 22,
+          "primary": null
+        },
+        {
+          "id": 23,
+          "primary": null
+        }
+      ],
+      "matched_expected_primary": 24,
+      "total": 24
+    }
+  ],
+  "limitations": [
+    "One pass per catalog on curated prompts; no repeated-run statistics or held-out generalization claim.",
+    "Both agents returned the same primary selections; no measured gain from description edits.",
+    "Task execution and secondary skill selection were not evaluated."
+  ]
+}

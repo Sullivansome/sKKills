@@ -1,0 +1,25 @@
+{
+  "skill_name": "kk-product-spec",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "We want bulk CSV invites for workspace admins. Some emails already belong to users, and an admin can belong to two workspaces. Turn this into a scoped feature spec, no messages sent.",
+      "expected_output": "Observable acceptance examples, tenant boundaries, failure handling, and a first delivery slice.",
+      "files": [],
+      "expectations": [
+        "Includes duplicate/partial-failure behavior and per-workspace authorization.",
+        "Does not invent user research or send invitations."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Support says onboarding is confusing, so should we rebuild it? We only have three ticket excerpts, no analytics yet. Write the discovery plan.",
+      "expected_output": "A cheap learning plan tied to available evidence.",
+      "files": [],
+      "expectations": [
+        "Labels limited evidence and assumptions.",
+        "Defines success and a small experiment without declaring a rebuild proven necessary."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "skill_name": "kk-distribution",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Assess the attached MapleDesk 2.4.0 release inventory. We want all three requested platforms published together and require everything to be signed. Explain readiness and the concrete next work; this task only permits assessment and local preparation.",
+      "expected_output": "Evidence-based blocked release assessment with separate platform and package trust gaps, aggregate publication gating, and no claim of signing or publishing.",
+      "files": ["evals/files/release-inventory.json"],
+      "expectations": [
+        "Blocks aggregate publication for all requested targets given the unsigned or unverified inventory.",
+        "Identifies missing final DMG signing and notarization, distinguishing these from the app and updater signatures.",
+        "Identifies Chocolatey script/package authenticity and pre-execution verification gaps despite the signed MSI.",
+        "Does not assert that plain Chocolatey install enforces NuGet or detached signatures without client/feed evidence.",
+        "Requires signed APT metadata, detached direct-artifact signatures, and independently trusted key provisioning; distinguishes APT metadata trust from per-DEB signatures.",
+        "Requires final payload signatures and a signed version/platform/digest manifest after byte-changing steps, and reports unavailable access without fabricating results."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Prepare a macOS release plan for our universal CLI tarball and GUI DMG. Both should work on fresh supported Macs. We have an approved Developer ID identity but the runner currently has no signing access. Everything must be signed. The updater reports a valid signature already.",
+      "expected_output": "Concrete ordered build/sign/notarize/verify workflow with an explicit signing-access blocker and separate CLI, DMG, updater and detached-signature handling.",
+      "files": [],
+      "expectations": [
+        "Does not substitute updater or detached signatures for native Developer ID signing and notarization.",
+        "Distinguishes notarization submission containers from staplable artifacts and does not instruct stapling a raw CLI or ZIP.",
+        "Verifies expected publisher, final bytes and clean installation before publication, with no unsigned fallback or generated production identity."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our MSI is Authenticode-signed and timestamped. Prepare its Chocolatey package release. The package downloads the MSI and checks SHA256; a proposed change signs the nupkg and adds a signature check inside chocolateyInstall.ps1. Is that sufficient for everything to be signed and trusted before execution? Use only local preparation.",
+      "expected_output": "Corrects the self-authentication gap and prepares a channel-specific plan without pretending public Chocolatey automatically enforces package signatures.",
+      "files": [],
+      "expectations": [
+        "Explains why a check inside a replaceable package script cannot authenticate that script before execution.",
+        "Requires signed final scripts and wrapper, trusted pre-execution package verification or a documented verified immutable feed-ingestion trust chain, and installer publisher verification before running it.",
+        "Keeps submission, moderation and availability separate and does not publish in a local-preparation task."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Design signed Linux delivery for DEB/APT, RPM/DNF and direct AppImage downloads. Existing users run curl install.sh | sh, and the server hosts the key next to the downloads. Checksums pass. Provide a usable migration path that rejects malicious substitutions and stale unattended updates.",
+      "expected_output": "Format-specific signing and repository trust, independently authenticated bootstrap and keys, usable positive and negative verification paths, and an explicit update freshness policy.",
+      "files": [],
+      "expectations": [
+        "Distinguishes APT signed metadata/hash-chain authentication from embedded per-DEB signatures and requires verification before direct dpkg execution.",
+        "Requires RPM package and repository metadata verification without signature bypasses.",
+        "Requires direct AppImage and installer signatures, independent key/bootstrap trust and verification before script execution; same-origin key download is insufficient.",
+        "Requires version-bound signed metadata and explicit freshness/rollback policy rather than claiming signatures alone prevent replay, and tests trusted installation as well as rejection cases."
+      ]
+    }
+  ]
+}

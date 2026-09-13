@@ -1,0 +1,25 @@
+{
+  "skill_name": "kk-software-verification",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Review our retry fix. It passes because the test mocks save() to always succeed; the incident was a commit succeeding followed by a lost response.",
+      "expected_output": "Evidence-based review and a meaningful boundary test.",
+      "files": [],
+      "expectations": [
+        "Tests post-commit retry and durable duplicate prevention.",
+        "Does not equate mock success with real integration proof."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Our checkout accessibility scanner passes. Verify keyboard checkout with error recovery and slow requests before launch.",
+      "expected_output": "Manual interaction plan or observed checks alongside automation.",
+      "files": [],
+      "expectations": [
+        "Checks focus, keyboard behavior, errors/loading and recovery.",
+        "Does not claim full accessibility conformance from a scanner or unexecuted plan."
+      ]
+    }
+  ]
+}

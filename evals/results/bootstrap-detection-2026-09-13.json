@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-13",
+  "method": "Independent forward-test of the renamed bootstrap skill using cases 7\u201310 and raw fixture files. The agent was instructed to project only prompt/id/files, not read grading expectations. Assessment-only tasks; no installs, edits or runtime commands.",
+  "source": "../../kk-project-bootstrap/evals/evals.json",
+  "record_type": "Detected-stack and reference fields transcribed from the agent response; review_evidence is a concise reviewer summary, not a full transcript.",
+  "cases": [
+    {
+      "id": 7,
+      "detected_stack": "React Router 7 application on Node, with legacy react-query 3. Neither dependency is a scoped TanStack package. TypeScript and the build framework are unconfirmed.",
+      "relevant_references": [
+        "references/node-ts.md",
+        "assets/workflows/ci.yml"
+      ],
+      "review_evidence": "Explicitly excludes tsr generation, Start/Vite scaffolding, dependency installation and release/installer jobs. States the manifest alone cannot establish existing setup.",
+      "expectations_passed": 2
+    },
+    {
+      "id": 8,
+      "detected_stack": "Next.js 15.4 application with @tanstack/react-query 5 as a supplemental data layer.",
+      "relevant_references": [
+        "references/node-ts.md",
+        "references/nextjs.md",
+        "references/tanstack.md \u2014 Query-only guidance",
+        "assets/workflows/ci.yml"
+      ],
+      "review_evidence": "Preserves Next.js; excludes TanStack route-tree generation and release jobs. Leaves version-specific next typegen unverified rather than inventing support.",
+      "expectations_passed": 2
+    },
+    {
+      "id": 9,
+      "detected_stack": "Vite application with scoped TanStack Router; routing may be code-based or file-based. TanStack Start is not detected.",
+      "relevant_references": [
+        "references/node-ts.md",
+        "references/tanstack.md",
+        "assets/workflows/ci.yml"
+      ],
+      "review_evidence": "Requires routing/configuration evidence before generation; excludes unconditional tsr generation and a persistent dev server in CI.",
+      "expectations_passed": 2
+    },
+    {
+      "id": 10,
+      "detected_stack": "Generic Go CLI with a go 1.22 directive, no module dependencies and a main entry point. No Wails or frontend markers are present in the supplied files.",
+      "relevant_references": [
+        "references/go.md",
+        "assets/workflows/ci.yml \u2014 generic CI structure only"
+      ],
+      "review_evidence": "Recommends a failure-producing gofmt check, vet/test/build, reports absent coverage, and excludes Wails, Node/frontend and installer/release jobs.",
+      "expectations_passed": 3
+    }
+  ],
+  "review_summary": {
+    "passed_expectations": 9,
+    "total_expectations": 9,
+    "cases": 4
+  },
+  "limitations": [
+    "No baseline task-execution comparison for these four cases.",
+    "No fixture application was built or run.",
+    "Correct guidance selection does not validate the generated configuration of a complete real repository."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "product": "MapleDesk",
+  "version": "2.4.0",
+  "requested_channels": ["macOS direct DMG", "Chocolatey community", "Linux APT and direct AppImage"],
+  "macos": {
+    "app_signature": "valid Developer ID Application; expected Team ID",
+    "dmg_signature": "absent",
+    "notarization": "not submitted",
+    "updater_signature": "valid"
+  },
+  "windows": {
+    "msi_signature": "valid expected Authenticode publisher and RFC3161 timestamp",
+    "chocolatey_script_signatures": "absent",
+    "nupkg_signature": "absent",
+    "install_script_behavior": "checks SHA256 then executes MSI",
+    "client_package_signature_enforcement": "not established"
+  },
+  "linux": {
+    "artifacts": ["deb", "AppImage"],
+    "sha256_manifest": "present, unsigned",
+    "detached_signatures": "absent",
+    "apt_metadata_signature": "absent",
+    "repository_key_delivery": "key linked beside downloads"
+  },
+  "publication": "none",
+  "available_access": "read-only candidate inventory; no production signing credentials"
+}

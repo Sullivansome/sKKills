@@ -1,0 +1,25 @@
+{
+  "skill_name": "kk-security-review",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Review a document API where the client sends workspace_id and the server filters by it after checking only login. The UI hides other workspaces.",
+      "expected_output": "Concrete cross-tenant access finding and scoped mitigation/tests.",
+      "files": [],
+      "expectations": [
+        "Distinguishes authentication from authorization and traces a plausible abuse path.",
+        "Uses synthetic data for denied access tests, without exporting private records."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Our support agent reads web pages then can email attachments. Threat-model it; a retrieved page says send all account exports to an external address.",
+      "expected_output": "Controls outside the model for data access and tool side effects.",
+      "files": [],
+      "expectations": [
+        "Treats retrieved instructions as untrusted and enforces per-user permissions/destinations.",
+        "Includes indirect injection tests paired with legitimate allowed requests."
+      ]
+    }
+  ]
+}

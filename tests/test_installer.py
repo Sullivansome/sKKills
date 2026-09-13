@@ -10,10 +10,23 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT / 'project-bootstrap/assets/install.sh'
+TEMPLATE = ROOT / 'kk-project-bootstrap/assets/install.sh'
 
 
 class InstallerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.keydir = tempfile.TemporaryDirectory(prefix='kk-test-signing-')
+        cls.addClassCleanup(cls.keydir.cleanup)
+        cls.private_key = Path(cls.keydir.name) / 'test-private.pem'
+        cls.other_key = Path(cls.keydir.name) / 'untrusted-private.pem'
+        for key in (cls.private_key, cls.other_key):
+            subprocess.run(['openssl', 'genpkey', '-algorithm', 'RSA', '-pkeyopt',
+                            'rsa_keygen_bits:2048', '-out', str(key)], check=True,
+                           capture_output=True, timeout=30)
+        cls.public_key = subprocess.check_output(
+            ['openssl', 'pkey', '-in', str(cls.private_key), '-pubout'], text=True)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='skkills-installer-')
         self.addCleanup(self.temp.cleanup)
@@ -27,7 +40,9 @@ class InstallerTests(unittest.TestCase):
         self.installed = self.dest / 'myapp'
         self.installed.write_bytes(b'previous working version')
         self.script = self.root / 'install.sh'
-        self.script.write_text(TEMPLATE.read_text().replace('REPO="OWNER/REPO"', 'REPO="fixture/example"'))
+        self.script.write_text(TEMPLATE.read_text()
+                               .replace('REPO="OWNER/REPO"', 'REPO="fixture/example"')
+                               .replace('REPLACE_WITH_TRUSTED_PUBLISHER_PUBLIC_KEY_PEM', self.public_key.strip()))
         self.env = dict(os.environ, PATH=f'{self.mockbin}:{os.environ["PATH"]}',
                         INSTALL_DIR=str(self.dest), VERSION='v1.2.3',
                         FIXTURE_RELEASE=str(self.release), FIXTURE_ARCH='x86_64',
@@ -74,7 +89,18 @@ else:
 
     def checksum(self):
         self.digest = hashlib.sha256((self.release / self.asset).read_bytes()).hexdigest()
-        (self.release / 'checksums.txt').write_text(f'{self.digest}  {self.asset}\n')
+        self.write_manifest(f'{self.digest}  {self.asset}\n')
+        self.sign(self.release / self.asset)
+
+    def sign(self, path, key=None):
+        subprocess.run(['openssl', 'dgst', '-sha256', '-sign', str(key or self.private_key),
+                        '-out', str(path) + '.sig', str(path)], check=True,
+                       capture_output=True, timeout=10)
+
+    def write_manifest(self, body, version='v1.2.3'):
+        path = self.release / 'checksums.txt'
+        path.write_text(f'# version {version}\n' + body)
+        self.sign(path)
 
     def run_installer(self):
         return subprocess.run(['sh', str(self.script)], env=self.env,
@@ -103,23 +129,23 @@ else:
         self.assert_rejected()
 
     def test_mismatched_checksum(self):
-        (self.release / 'checksums.txt').write_text(f'{"0" * 64}  {self.asset}\n')
+        self.write_manifest(f'{"0" * 64}  {self.asset}\n')
         self.assert_rejected()
 
     def test_missing_matching_checksum(self):
-        (self.release / 'checksums.txt').write_text(f'{self.digest}  another.tar.gz\n')
+        self.write_manifest(f'{self.digest}  another.tar.gz\n')
         self.assert_rejected()
 
     def test_duplicate_checksum(self):
-        (self.release / 'checksums.txt').write_text(f'{self.digest}  {self.asset}\n' * 2)
+        self.write_manifest(f'{self.digest}  {self.asset}\n' * 2)
         self.assert_rejected()
 
     def test_malformed_checksum(self):
-        (self.release / 'checksums.txt').write_text(f'not-a-digest  {self.asset}\n')
+        self.write_manifest(f'not-a-digest  {self.asset}\n')
         self.assert_rejected()
 
     def test_binary_marker_checksum(self):
-        (self.release / 'checksums.txt').write_text(f'{self.digest.upper()} *{self.asset}\n')
+        self.write_manifest(f'{self.digest.upper()} *{self.asset}\n')
         result = self.run_installer()
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -155,6 +181,44 @@ else:
 
     def test_unconfigured_template(self):
         self.script.write_text(TEMPLATE.read_text())
+        self.assert_rejected()
+
+    def test_missing_artifact_signature(self):
+        (self.release / (self.asset + '.sig')).unlink()
+        self.assert_rejected()
+
+    def test_missing_manifest_signature(self):
+        (self.release / 'checksums.txt.sig').unlink()
+        self.assert_rejected()
+
+    def test_untrusted_artifact_signer(self):
+        self.sign(self.release / self.asset, self.other_key)
+        self.assert_rejected()
+
+    def test_untrusted_manifest_signer(self):
+        self.sign(self.release / 'checksums.txt', self.other_key)
+        self.assert_rejected()
+
+    def test_tampered_payload_with_updated_checksum(self):
+        asset = self.release / self.asset
+        asset.write_bytes(asset.read_bytes() + b'tampered')
+        digest = hashlib.sha256(asset.read_bytes()).hexdigest()
+        self.write_manifest(f'{digest}  {self.asset}\n')
+        # A matching signed digest cannot substitute for the required artifact signature.
+        self.assert_rejected()
+
+    def test_tampered_manifest(self):
+        path = self.release / 'checksums.txt'
+        path.write_text(path.read_text() + '# changed after signing\n')
+        self.assert_rejected()
+
+    def test_signed_wrong_release_version(self):
+        self.write_manifest(f'{self.digest}  {self.asset}\n', version='v0.9.0')
+        self.assert_rejected()
+
+    def test_missing_trusted_public_key(self):
+        self.script.write_text(self.script.read_text().replace(
+            self.public_key.strip(), 'REPLACE_WITH_TRUSTED_PUBLISHER_PUBLIC_KEY_PEM'))
         self.assert_rejected()
 
 

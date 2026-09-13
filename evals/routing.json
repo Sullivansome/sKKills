@@ -1,0 +1,288 @@
+{
+  "description": "Lead-skill selection cases; supporting skills may also apply. These fixtures do not execute automatic skill triggering.",
+  "cases": [
+    {
+      "id": 0,
+      "prompt": "Our launch is next month. Audit lifecycle gaps across product, CI, security, on-call and retirement ownership.",
+      "expected_primary": "kk-software-lifecycle",
+      "not_primary": [
+        "kk-product-spec",
+        "kk-project-bootstrap"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Are we ready to launch this paid team service? Start with a cross-lifecycle readiness assessment.",
+      "expected_primary": "kk-software-lifecycle",
+      "not_primary": [
+        "kk-software-verification",
+        "kk-release-delivery"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We think users want bulk invites. Turn the idea and three support tickets into a scoped spec and acceptance examples.",
+      "expected_primary": "kk-product-spec",
+      "not_primary": [
+        "kk-ai-implementation",
+        "kk-architecture-design",
+        "kk-experience-design"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Decide what outcome our onboarding experiment should measure before we build anything.",
+      "expected_primary": "kk-product-spec",
+      "not_primary": [
+        "kk-software-lifecycle",
+        "kk-software-verification"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Design the transaction and module boundaries for a new order processor. No existing consumers or data yet.",
+      "expected_primary": "kk-architecture-design",
+      "not_primary": [
+        "kk-software-evolution",
+        "kk-ai-implementation"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Compare keeping this feature in our monolith versus a separate service. Give the consequential design tradeoffs.",
+      "expected_primary": "kk-architecture-design",
+      "not_primary": [
+        "kk-production-ops",
+        "kk-product-spec"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Set up local hooks and GitHub CI for this repo. Keep the current deployment untouched.",
+      "expected_primary": "kk-project-bootstrap",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-ai-implementation",
+        "kk-platform-infrastructure"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Configure our first tag-triggered desktop build pipeline and release artifacts. No production rollout is requested.",
+      "expected_primary": "kk-project-bootstrap",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-software-lifecycle"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Implement the specified retry bug fix and add its regression test. Preserve the unrelated staged README changes.",
+      "expected_primary": "kk-ai-implementation",
+      "not_primary": [
+        "kk-software-verification",
+        "kk-architecture-design"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Fix the tenant endpoint returning 200 where its existing test correctly expects 403. Keep legitimate access working.",
+      "expected_primary": "kk-ai-implementation",
+      "not_primary": [
+        "kk-security-review",
+        "kk-software-verification"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Review this retry fix for correctness only; do not edit the code. The test mocks all persistence calls.",
+      "expected_primary": "kk-software-verification",
+      "not_primary": [
+        "kk-ai-implementation",
+        "kk-security-review",
+        "kk-ai-evaluation"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Verify this checkout against keyboard and error-recovery acceptance criteria. Report actual checks and gaps.",
+      "expected_primary": "kk-software-verification",
+      "not_primary": [
+        "kk-product-spec",
+        "kk-software-lifecycle"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Threat-model cross-tenant document access and trace abuse paths in the API. Do not modify code yet.",
+      "expected_primary": "kk-security-review",
+      "not_primary": [
+        "kk-ai-implementation",
+        "kk-software-verification"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Review CI token permissions and untrusted PR execution for concrete security exposure.",
+      "expected_primary": "kk-security-review",
+      "not_primary": [
+        "kk-project-bootstrap",
+        "kk-release-delivery"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "The artifact is built. Prepare its production canary gates, promotion decision and rollback procedure.",
+      "expected_primary": "kk-release-delivery",
+      "not_primary": [
+        "kk-project-bootstrap",
+        "kk-production-ops",
+        "kk-distribution"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Verify the selected draft release assets before publication and plan delivery of that exact version.",
+      "expected_primary": "kk-release-delivery",
+      "not_primary": [
+        "kk-software-verification",
+        "kk-project-bootstrap"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Production errors spiked after deploy and customers cannot pay. Start incident diagnosis now.",
+      "expected_primary": "kk-production-ops",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-ai-implementation"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Define freshness SLOs and actionable alerts for our nightly import, and plan a restore drill.",
+      "expected_primary": "kk-production-ops",
+      "not_primary": [
+        "kk-software-verification",
+        "kk-software-lifecycle"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Rename this money field while old clients keep writing for 90 days. Plan the compatible migration.",
+      "expected_primary": "kk-software-evolution",
+      "not_primary": [
+        "kk-architecture-design",
+        "kk-release-delivery"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Retire the legacy API accounting for quarterly jobs, retained exports, credentials and billing.",
+      "expected_primary": "kk-software-evolution",
+      "not_primary": [
+        "kk-production-ops",
+        "kk-software-lifecycle"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "Is our RAG feature ready? Evaluate grounded answers, tenant isolation and injection failures without live tool side effects.",
+      "expected_primary": "kk-ai-evaluation",
+      "not_primary": [
+        "kk-software-verification",
+        "kk-security-review"
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "Compare a cheaper LLM against our current purchase-order agent with held-out cases and cost/latency results.",
+      "expected_primary": "kk-ai-evaluation",
+      "not_primary": [
+        "kk-ai-implementation",
+        "kk-software-verification"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "What does the acronym CI stand for? Answer briefly.",
+      "expected_primary": null,
+      "not_primary": [
+        "kk-project-bootstrap",
+        "kk-software-lifecycle"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "Change the single typo \"Settigns\" to \"Settings\". No other change is needed.",
+      "expected_primary": null,
+      "not_primary": [
+        "kk-software-lifecycle",
+        "kk-product-spec"
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "Package our desktop app for signed macOS DMG, Windows Chocolatey, and Linux APT/direct downloads. Everything distributed must be signed.",
+      "expected_primary": "kk-distribution",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-project-bootstrap"
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "Our MSI is signed. Establish trusted Chocolatey package verification before package scripts run, then prepare publication.",
+      "expected_primary": "kk-distribution",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-project-bootstrap"
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "Set up publisher signatures and trusted bootstrap verification for our Linux CLI tarballs and install script.",
+      "expected_primary": "kk-distribution",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-project-bootstrap"
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "Design the keyboard-accessible interaction states and prototype for bulk CSV import, including partial success and retry. Keep the approved product scope.",
+      "expected_primary": "kk-experience-design",
+      "not_primary": [
+        "kk-product-spec",
+        "kk-software-verification"
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "Improve the discoverability and error recovery of our CLI commands. Design the interaction contract before implementation.",
+      "expected_primary": "kk-experience-design",
+      "not_primary": [
+        "kk-ai-implementation",
+        "kk-architecture-design"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "Provision isolated staging infrastructure using our existing IaC. Review the exact resource changes and state handling before applying within the authorized staging scope.",
+      "expected_primary": "kk-platform-infrastructure",
+      "not_primary": [
+        "kk-project-bootstrap",
+        "kk-release-delivery"
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "Our infrastructure preview unexpectedly replaces a database. Review target identity, state drift and recovery feasibility; no production outage is in progress.",
+      "expected_primary": "kk-platform-infrastructure",
+      "not_primary": [
+        "kk-production-ops",
+        "kk-software-evolution"
+      ]
+    }
+  ]
+}

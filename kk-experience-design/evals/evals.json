@@ -1,0 +1,27 @@
+{
+  "skill_name": "kk-experience-design",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Design the interaction contract for bulk CSV invites in our existing admin UI. Admins can switch workspaces; some rows duplicate existing members. A timeout can occur after some invites are accepted. Preserve our components. No real users are available for testing and no invitations may be sent.",
+      "expected_output": "Reviewable state/interaction contract and a scoped prototype validation plan.",
+      "files": [],
+      "expectations": [
+        "Covers workspace context, duplicate and partial-success states, and retry behavior without representing pending results as confirmed success.",
+        "Specifies actionable errors, keyboard/focus behavior and realistic responsive/localized content.",
+        "Preserves the existing components and reports research/prototype execution limits without claiming observed user validation."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Our CLI deletes old exports. Redesign the command interaction and help text so people understand which files will be removed and how to recover. Some deletion is permanent. Do not implement a GUI or execute deletion.",
+      "expected_output": "A CLI interaction contract with discoverability, preview, meaningful confirmation and truthful recovery semantics.",
+      "files": [],
+      "expectations": [
+        "Keeps the solution within CLI/help scope and does not execute deletion.",
+        "Distinguishes reversible and permanent effects, exposes the affected scope before a consequential action, and avoids promising undo for permanent deletion.",
+        "Provides observable success/error/partial-failure acceptance examples rather than a visual-only design."
+      ]
+    }
+  ]
+}

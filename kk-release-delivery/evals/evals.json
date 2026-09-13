@@ -1,0 +1,27 @@
+{
+  "skill_name": "kk-release-delivery",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "We need a release plan for moving the orders service from v1 to v2. Please prepare the runbook locally; production execution and customer messages are not authorized. We have 4 instances deployed one at a time, PostgreSQL, and desktop clients that may stay on v1 for 90 days. The proposed migration renames orders.total_cents to total_amount and converts integers to decimal currency units. v1 only reads/writes total_cents; v2 only reads/writes total_amount. Existing jobs retry a failed order event up to three times, and both versions consume the same queue. We have nightly backups, but nobody has tested restoring them. The draft deploy note says: 'run ALTER TABLE RENAME COLUMN, deploy v2, if errors increase deploy v1, then drop legacy client support immediately.' The new version currently has 0.3% errors in staging, versus 0.1% for v1, using 1000 synthetic requests each. We don't have a production latency baseline in these notes. Please produce a practical rollout and recovery runbook and identify what must change before release. Do not claim to run any commands or inspect systems outside the supplied facts.",
+      "expected_output": "Compatible staged release and feasible recovery runbook.",
+      "files": [
+        "evals/files/orders-transition.md"
+      ],
+      "expectations": [
+        "Rejects immediate destructive rename and code-only rollback assumptions.",
+        "Includes restore rehearsal, idempotency, meaningful health gates, and old-client compatibility."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "We built the first draft CLI release. Test the installer via releases/latest before publication, then push all tags.",
+      "expected_output": "Correct release verification scoped to the intended version.",
+      "files": [],
+      "expectations": [
+        "Uses authenticated draft or selected artifacts before publication; does not mistake latest for the draft.",
+        "Pushes only the intended tag when authorized and distinguishes built/published/verified."
+      ]
+    }
+  ]
+}

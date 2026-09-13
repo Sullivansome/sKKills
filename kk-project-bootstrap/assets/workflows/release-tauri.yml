@@ -1,0 +1,74 @@
+# Tauri signed-candidate scaffold. No public release uploads are configured.
+# Requires: pnpm (or adapt install/build steps), src-tauri/tauri.conf.json.
+# Signing is required. Add tested native signing, detached signatures and verification for every target.
+# Adapt runtime/toolchain versions; resolve action refs to verified SHAs before production use.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15        # Apple Silicon -> dmg
+            target: aarch64-apple-darwin
+          - os: macos-15-intel  # Intel -> dmg
+            target: x86_64-apple-darwin
+          - os: windows-latest  # -> msi (+ nsis exe if configured)
+            target: x86_64-pc-windows-msvc
+          - os: ubuntu-22.04    # -> AppImage + deb
+            target: x86_64-unknown-linux-gnu
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Remove only after implementing the actual application-specific signing gates.
+      - name: Require configured signing and verification
+        shell: bash
+        run: |
+          echo "Configure native signing/notarization and final payload signature verification for every target."
+          echo "Only an aggregate success gate may publish the verified release."
+          exit 1
+
+      - name: Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # rustup reads the exact tested version from rust-toolchain.toml.
+      - run: rustup show active-toolchain
+      - run: rustup target add ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          args: --target ${{ matrix.target }}
+
+      # Add native and detached-signature verification against expected identities here.
+      # Store candidates privately, then publish in a separate job that needs EVERY
+      # requested platform's successful verification. Never use always() to bypass failures.

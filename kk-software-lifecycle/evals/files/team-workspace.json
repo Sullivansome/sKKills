@@ -1,0 +1,11 @@
+{
+  "product": "Paid team workspace with a web service and desktop companion",
+  "request": "Prepare the full delivery workflow locally; no cloud mutation, publication, customer contact or production key access is authorized.",
+  "product_evidence": "Three support tickets request bulk invites; no measured task-completion baseline.",
+  "design": "Screenshot of success state only; workspace switching, partial invite success and keyboard recovery are unspecified.",
+  "implementation": "Feature branch passes unit tests with mocked persistence; branch has not been integrated.",
+  "environment": "Staging preview targets the production account and proposes replacement of a shared database; no restore drill has run.",
+  "distribution": "macOS, Windows/Chocolatey and Linux requested together; draft artifacts have checksums but no publisher signatures.",
+  "operations": "Error logs exist; no support owner, user-facing SLO or restore evidence.",
+  "future": "Older desktop clients may remain in use for 90 days; retained exports and service retirement have no documented owner."
+}
