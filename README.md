@@ -82,9 +82,9 @@ python3 -m venv .venv
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-Each skill includes realistic prompts, expected outcomes, and required grading expectations in `evals/evals.json` (40 behavioral cases total). Four bootstrap cases use small raw manifests/source fixtures for stack and scope decisions; distribution and lifecycle cases include raw readiness inventories. These fixtures are inputs for assessment, not tested full applications or recommended dependency versions.
+Each skill includes realistic prompts, expected outcomes, and required grading expectations in `evals/evals.json` (41 behavioral cases total). Five bootstrap cases use raw manifests, source, or release-contract fixtures for stack and scope decisions; distribution and lifecycle cases include raw readiness inventories. These fixtures are inputs for assessment, not tested full applications or recommended dependency versions.
 
-[Routing cases](evals/routing.json) cover 31 lead-skill choices, including positive and negative coverage for every skill. Selection can use supporting skills as well; an expected lead is not an exclusive allowed-skill list. The validator checks namespace, metadata, resources, grading expectations, routing labels/coverage, and workflow YAML. It does not perform model selection or task execution. Installer and validator regression tests run locally without network access. The [evaluation record](docs/evaluation-results.md) separates these structural checks from observed skill behavior.
+[Routing cases](evals/routing.json) cover 33 lead-skill choices, including positive and negative coverage for every skill. Selection can use supporting skills as well; an expected lead is not an exclusive allowed-skill list. The validator checks namespace, metadata, resources, grading expectations, routing labels/coverage, and workflow YAML. It does not perform model selection or task execution. Installer and validator regression tests run locally without network access. The [evaluation record](docs/evaluation-results.md) separates these structural checks from observed skill behavior.
 
 The [validation workflow](.github/workflows/validate.yml) runs the same commands on Linux and macOS after pushes to `main` and on pull requests. Hosted results are only available after the changes are pushed.
 

@@ -126,6 +126,19 @@
         "Includes a failing format gate and actual Go test/build responsibilities.",
         "Does not add release/installer jobs."
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "Use our release contract to recommend the initial artifact pipeline for logtail. Keep manual dispatch and the two Linux targets. Explain version binding and publication gates; assess only, without installing tools or running a release.",
+      "expected_output": "A scoped pipeline assessment preserving dispatch, source/version binding and aggregate trust gates, with unavailable signing checks explicit.",
+      "files": [
+        "evals/files/manual-release.json"
+      ],
+      "expectations": [
+        "Preserves workflow_dispatch and validates source_ref/release_version without adding a tag trigger or a tag-push step.",
+        "Separates candidate builds from publication and requires both Linux targets to pass final-payload signatures and verification.",
+        "Reports unavailable signing evidence and performs no publication or repository mutations."
+      ]
     }
   ]
 }

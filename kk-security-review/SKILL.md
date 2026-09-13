@@ -1,6 +1,6 @@
 ---
 name: kk-security-review
-description: Threat-model or review application, infrastructure, dependency, and AI-agent trust boundaries; implement scoped mitigations and security regression tests when requested. Use for sensitive data, authentication/authorization changes, exposed APIs, supply-chain risks, or security readiness reviews.
+description: Threat-model abuse paths, investigate security exposure, or review application, infrastructure, dependency, and agent trust boundaries. Use for security assessments and scoped hardening; specified bug fixes stay with implementation, with this skill supporting unresolved security risks.
 ---
 
 # Security Review

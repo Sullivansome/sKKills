@@ -1,0 +1,18 @@
+{
+  "product": "logtail",
+  "kind": "Go CLI",
+  "build_command": "go build ./cmd/logtail",
+  "provider": "GitHub Actions",
+  "trigger": "workflow_dispatch",
+  "inputs": [
+    "source_ref",
+    "release_version"
+  ],
+  "targets": [
+    "linux-amd64",
+    "linux-arm64"
+  ],
+  "signing": "Existing protected publisher identity; access not supplied for this assessment",
+  "publication": "Separate gated job; no tag requirement",
+  "requested_scope": "Assess initial artifact automation; no repository or external mutations"
+}

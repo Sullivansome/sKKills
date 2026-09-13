@@ -1,6 +1,6 @@
 ---
 name: kk-project-bootstrap
-description: Scaffold a repository or set up reproducible development tooling, formatting, linting, type checks, hooks, CI, and initial artifact release pipelines. Covers web, desktop, mobile, and CLI stacks. Use for missing or broken project setup and build automation; use kk-release-delivery for production rollout and recovery decisions.
+description: Scaffold repositories or configure reproducible tooling, hooks, CI, and initial artifact build pipelines. Use for missing or broken project setup; use kk-distribution for package/signing decisions and kk-release-delivery for promotion, rollout, and recovery.
 ---
 
 # Project Bootstrap
@@ -15,7 +15,7 @@ Scale setup to the project: a documentation-only repository need not acquire a c
 
 ## Step 1 — Detect the stack
 
-Look for marker files before doing anything. Check framework markers BEFORE generic ones — a Next.js repo also has `package.json`, and an Electron repo looks like a plain Node project until you read the deps:
+Check framework markers and dependencies before generic manifests:
 
 | Marker | Stack | Reference |
 |---|---|---|
@@ -48,8 +48,6 @@ Cover these responsibilities where applicable (names may vary per stack, and a c
 4. `test` — relevant automated tests, with slower integration/e2e checks separate when useful
 5. `build` — proves the thing compiles
 
-Why this matters: if CI runs `eslint src/` but the local hook runs something else, drift is guaranteed. One definition, two callers (pre-commit hook and CI job).
-
 ## Step 3 — Configure the toolchain
 
 Follow the stack reference file. Universal principles:
@@ -66,9 +64,9 @@ Per-stack tooling: `lint-staged` + `husky` (Node), `pre-commit` framework (Pytho
 
 Verify hooks in an isolated temporary repository with the relevant configuration and pinned tools. Exercise bad formatting, a lint failure, a filename containing spaces, and partial staging. Confirm exit codes and that unrelated/unstaged content stays out of the index. Do not create a test commit, stage a deliberate defect, or run blanket `git add` in the user's working repository.
 
-## Step 5 — GitHub Actions CI
+## Step 5 — CI
 
-Start from [assets/workflows/ci.yml](assets/workflows/ci.yml) and adapt it to the stack. Run the applicable Step 2 commands: format:check → lint → typecheck → test → build, respecting generation dependencies. Use ecosystem-supported dependency caching where it improves measured runtime.
+Preserve the existing CI provider. For GitHub Actions, adapt [assets/workflows/ci.yml](assets/workflows/ci.yml). Run applicable Step 2 commands, respecting generation dependencies. Use ecosystem-supported dependency caching where useful.
 
 The template deliberately fails until adapted. Replace its guard with actual applicable commands; merely deleting the guard is not a working CI configuration. Run required code generation before checks that consume generated types. Preserve an existing CI provider unless switching is requested. Use explicit read-only permissions for checks, bounded job timeouts, and job-scoped release permissions. Keep secrets away from untrusted PR code. Resolve production action references to verified full commit SHAs and use the project's tested runtime/toolchain versions.
 
@@ -76,13 +74,11 @@ For a desktop app, add a smoke-build job on the target platforms (macOS, Windows
 
 ## Step 6 — Release setup, when in scope
 
-Preserve the existing provider, trigger, and distribution model. For hooks/CI-only requests, skip this step. Web/API services may deploy on merge or through an existing platform; do not add tags, GitHub Releases, installers, or publication jobs just because the project needs CI.
+For requested release automation, preserve the provider, trigger, and product's distribution model. Skip this step for hooks/CI-only work.
 
-When initial artifact release automation is requested, read [references/release.md](references/release.md) and the relevant stack recipe. Choose outputs for the actual product: package registry, CLI binaries, desktop installers, or mobile distribution. Tag-driven GitHub Releases are an available pattern, not a requirement. Include [assets/install.sh](assets/install.sh) only for a requested compatible CLI tarball installer; desktop formats need their own tested handling.
+Read [references/release.md](references/release.md) for pipeline wiring and the relevant stack recipe. Use `kk-distribution` for package formats, signing, and installation trust; use `kk-release-delivery` for candidate promotion and recovery. Consult siblings only when available and needed; otherwise establish the scoped requirements directly.
 
-Use `kk-release-delivery` if available for production rollout, promotion gates, or recovery decisions. If it is unavailable, prepare those requirements directly rather than silently expanding a tooling task into a deployment.
-
-All distributed release artifacts must be signed and verified; missing keys or failed verification block publication. Use `kk-distribution` for macOS notarization, Windows/Chocolatey, Linux package repositories, and download/update trust. A checksum, updater signature, or successful build alone does not replace the platform-native and publisher-signature requirements. Keep build jobs separate from publishing, with an aggregate gate for every requested target.
+Separate build and publication jobs. Every requested target must pass final-payload publisher signatures, applicable native signing/notarization, and verification before publication; missing keys or failed checks block it. Checksums and updater signatures alone are insufficient.
 
 ## Step 7 — Verify, don't assume
 
@@ -90,24 +86,4 @@ Before declaring done, run applicable format, lint, type, test, and build comman
 
 Report what was configured, which checks ran, which commands to use, and the release trigger only if release setup was included.
 
-## Reference files
-
-Stack references (read only the detected one(s)):
-
-- [references/node-ts.md](references/node-ts.md) — pnpm/npm, Biome or ESLint+Prettier, tsc, vitest, husky+lint-staged (base for all JS stacks)
-- [references/nextjs.md](references/nextjs.md) — Next.js: eslint-config-next, next build, deploy-oriented release
-- [references/tanstack.md](references/tanstack.md) — TanStack Start/Router/Query: generated route tree gotchas
-- [references/electron.md](references/electron.md) — Electron: electron-builder, dmg/msi/AppImage
-- [references/rust-tauri.md](references/rust-tauri.md) — rustfmt, clippy, cargo test, Tauri desktop setup
-- [references/go.md](references/go.md) — generic Go toolchain, tests/build, and optional CLI distribution
-- [references/wails.md](references/wails.md) — Wails frontend integration and desktop release matrix; uses the Go reference for backend tooling
-- [references/python.md](references/python.md) — uv/pip, ruff, mypy, pytest, pre-commit framework
-- [references/kotlin-android.md](references/kotlin-android.md) — Gradle, ktlint, detekt, Android lint, APK/AAB signing
-- [references/swift-apple.md](references/swift-apple.md) — SwiftFormat, SwiftLint, xcodebuild, macOS dmg + notarization, iOS TestFlight
-
-Shared assets:
-
-- [references/release.md](references/release.md) — tag-driven GitHub Releases, installer matrix builds, curl install script
-- [assets/workflows/ci.yml](assets/workflows/ci.yml) — CI template to adapt
-- [assets/workflows/release-tauri.yml](assets/workflows/release-tauri.yml) — Tauri release template (dmg/msi/AppImage)
-- [assets/install.sh](assets/install.sh) — curl-install template with OS/arch detection and checksum verification
+The detection table links the stack references. JavaScript-based stacks reuse [references/node-ts.md](references/node-ts.md). Release-specific assets and their installer contract are linked from the release reference; load them only for that work.

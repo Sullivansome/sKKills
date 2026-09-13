@@ -4,7 +4,7 @@ Initial evaluation: 2026-09-10. Updated: 2026-09-13. These results distinguish p
 
 ## Authored cases
 
-The initial collection had 27 prompts. It now has **40 behavioral cases**: eleven bootstrap cases, four distribution cases, three lifecycle cases, and two per remaining skill. Every case has nonempty grading expectations. Four added bootstrap cases include raw fixtures for React Router/legacy React Query, Query-only usage in Next.js, scoped TanStack Router, and a generic Go CLI. The full suite has **not** been executed. The separate routing set now has 31 lead-skill selection cases; actual runtime automatic-selection precision/recall has not been measured.
+The initial collection had 27 prompts. It now has **41 behavioral cases**: twelve bootstrap cases, four distribution cases, three lifecycle cases, and two per remaining skill. Every case has nonempty grading expectations. Four added bootstrap cases include raw fixtures for React Router/legacy React Query, Query-only usage in Next.js, scoped TanStack Router, and a generic Go CLI. The full suite has **not** been executed. The separate routing set now has 33 lead-skill selection cases; actual runtime automatic-selection precision/recall has not been measured.
 
 ## Initial migration/release behavioral sample
 
@@ -75,3 +75,11 @@ Added experience design and platform infrastructure as distinct execution workfl
 An independent agent assessed lifecycle case 2 from the raw team-workspace fixture using the revised router/reference and both new skill bodies. It met all **five** authored expectations: separate experience/infrastructure ownership; acceptance and integrated-revision evidence; signature and destructive-change gates; documentation/support/feedback/compatibility/retirement handoffs; and truthful local-preparation limits. [Response excerpts and reviewer grades](../evals/results/full-lifecycle-2026-09-13.json) retain the evidence and limitations. This one assessment does not prove that generated infrastructure or an application works. The four new focused cases and four new routing cases remain unexecuted.
 
 Run each case in an isolated project with representative raw fixtures, record actual artifacts and commands, and grade behavior rather than matching headings. Include negative routing cases and held-out variants. Use repeated baseline/candidate runs before claiming improvement; calibrate subjective judgments with human review. Do not let evaluation agents access live services or incur external side effects merely because a scenario mentions them.
+
+## Scope and concision follow-up, 2026-09-13
+
+Narrowed implementation/security selection to the requested operation, clarified bootstrap/distribution/release ownership, and made tag-specific version and execution steps conditional throughout the shared release reference. Bootstrap now keeps pipeline wiring and the local installer contract while linking to existing stack recipes. Short publication gates remain in each entrypoint so individually installed skills retain the signing requirement. No skill was merged or made dependent on installing siblings.
+
+The four revised entrypoints and bootstrap release reference contain 3,355 whitespace-delimited words, down from 4,451 at `2bcc302` (24.6%). This measures text reduction, not token savings or behavioral improvement. Added bootstrap case 11 with a raw manual-release contract and routing cases 31–32 for manual pipeline setup and a specified auth UI implementation. The collection now has 41 authored behavioral cases and 33 routing cases. These additions and the revised descriptions have not received model runs; earlier selection results apply only to their recorded catalogs.
+
+Repository structural validation, official metadata checks for all four edited entrypoints, all 33 local tests, shell syntax, and diff whitespace checks passed. No hosted build, release, signing service or automatic skill-selection evaluation was executed in this follow-up.

@@ -283,6 +283,24 @@
         "kk-production-ops",
         "kk-software-evolution"
       ]
+    },
+    {
+      "id": 31,
+      "prompt": "Set up our first CLI artifact pipeline using manual dispatch with source_ref and release_version inputs. Keep that trigger; do not publish yet.",
+      "expected_primary": "kk-project-bootstrap",
+      "not_primary": [
+        "kk-release-delivery",
+        "kk-distribution"
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "Implement the already specified password-reset form using our existing auth client and acceptance tests. Keep the session and token contracts unchanged.",
+      "expected_primary": "kk-ai-implementation",
+      "not_primary": [
+        "kk-security-review",
+        "kk-product-spec"
+      ]
     }
   ]
 }

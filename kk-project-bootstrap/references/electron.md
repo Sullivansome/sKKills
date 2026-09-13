@@ -39,7 +39,7 @@ Release workflow: the authorized trigger selects a version/commit, then matrix j
 Gotchas:
 - macOS distribution requires configured Developer ID signing and notarization; Windows requires the chosen Authenticode signing provider and timestamps. Enforce identity/verification checks. Missing access blocks publication; report the required setup rather than publishing unsigned artifacts.
 - Linux AppImage build needs `sudo apt-get install -y fuse libfuse2` on newer runners.
-- Keep `version` in package.json in sync with the tag — electron-builder uses package.json's version for asset names.
+- Keep `version` in package.json consistent with the selected release version; compare it to the tag only for tag-triggered releases. electron-builder uses package.json's version for asset names.
 - electron-forge instead? Use its makers (`@electron-forge/maker-dmg` etc.) + `electron-forge publish`; same matrix idea.
 
 Curl install script: the bundled [assets/install.sh](../assets/install.sh) handles CLI tarballs only. If an AppImage or dmg installer is requested, implement a separate verified format-specific path and publish matching signed checksums and detached payload signatures; do not feed desktop artifacts to tar extraction. Windows can link to the selected installer.

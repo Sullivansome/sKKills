@@ -1,6 +1,6 @@
 ---
 name: kk-release-delivery
-description: Prepare or execute a reliable software release or deployment with artifact verification, environment checks, staged rollout, migration compatibility, and recovery criteria. Use for production delivery, release readiness, deployment automation, or rollback planning beyond initial CI setup.
+description: Prepare or execute release promotion, service deployment, staged rollout, and recovery. Use for candidate readiness and production delivery decisions; use kk-project-bootstrap for initial build automation and kk-distribution for package formats, signing, and install/update trust.
 ---
 
 # Release Delivery
@@ -16,14 +16,14 @@ Confirm the artifact to deliver, checks required, environment/account, rollout o
 ## Prepare one verifiable candidate
 
 - Run the applicable command contract and compatibility checks for the exact candidate. Link the source commit, version, lockfiles, configuration, and build result.
-- Build once and promote the same immutable artifact where the platform permits. Record digests; verify downloaded artifacts. For distributed software, include required signing/notarization and appropriate provenance or SBOM rather than claiming a checksum authenticates the publisher.
+- Build once and promote the same immutable artifact where the platform permits. Record digests and verify downloaded artifacts; retain required provenance or SBOM evidence.
 - Scope CI permissions per job, isolate untrusted pull-request builds from release credentials, and prefer scoped short-lived credentials. Resolve action references to verified commits for production workflows; do not invent SHAs.
 - Check environment configuration, secret references, runtime versions, infrastructure plan/drift, quotas, dependencies, and health probes. Keep secret values out of logs and reports.
 - Check schema/API compatibility across old and new instances and clients. Use additive migration first when needed. Specify whether code rollback is possible after writes change; reversing a deployment does not reverse data mutations.
 
-For published libraries, check package contents, exported API compatibility, supported runtimes, release notes, and a clean consumer install. For desktop/mobile apps, check platform artifacts, update compatibility, signing, store/channel constraints, and recovery for clients that cannot immediately downgrade.
+Check release notes and supported consumer compatibility. Account for store/channel delays and clients that cannot immediately downgrade. For libraries, inspect package contents, exported APIs and supported runtimes, then test a clean consumer install.
 
-This collection requires signed distribution. Use `kk-distribution` when available for macOS, Windows/Chocolatey, and Linux packaging/publication details. Every final distributable payload needs verified publisher signatures, with native OS/package signing and notarization where applicable. Missing credentials or failed verification block publication; no unsigned fallback or early partial-platform release. A service deployment can remain with this skill, using the platform's artifact-signing and verification contract.
+For distributed packages, use `kk-distribution` when available and carry its evidence into promotion: exact final payloads, verified publisher/native signatures and required notarization, plus clean install/update results. Otherwise establish that evidence directly using the ecosystem's supported verification path. Missing credentials or failed verification block publication across the requested targets; only an explicit user scope change narrows that set. For services, use the platform's artifact-signing and verification contract.
 
 ## Define rollout and recovery before execution
 

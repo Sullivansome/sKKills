@@ -1,68 +1,38 @@
-# Release flow
+# Initial release automation
 
-All distributable artifacts must be signed and verified before publication. For macOS, Windows/Chocolatey, Linux repositories, and direct-download trust use `kk-distribution` when available. Otherwise implement the same native and detached signature gates directly; checksums alone do not meet this collection's policy. Signing failures never fall back to unsigned publication.
+Use this reference to wire an agreed artifact/distribution contract into the project's build system. `kk-distribution` owns package formats, signing and consumer trust; `kk-release-delivery` owns candidate promotion and recovery. Use them when available and needed, or establish those requirements directly. Pipeline setup alone does not authorize publication.
 
-## The trigger: tags, not buttons
+## Preserve the trigger and version contract
 
-Pushing a tag `v1.2.3` triggers the release workflow. Reasons: the tag is the audit trail, anyone with push access can release without dashboard access, and the version in the tag is a single source of truth. For versioned artifacts, use `on: push: tags: ["v*"]` when consistent with the requested workflow. Preserve established service deployment triggers. Preparing the pipeline does not authorize pushing a tag or publishing a release.
+Keep the existing provider and trigger, including manual dispatch or platform-managed delivery. For a requested tag workflow, `on: push: tags: ["v*"]` is one GitHub Actions pattern. Only that mode requires creating/pushing a tag; setup verification does not.
 
-Keep the version in the manifest (`tauri.conf.json`, `package.json`, `Cargo.toml`) in sync with the tag — either bump it in a release commit before tagging, or have the workflow inject the tag version into the manifest before build and signing (verify the installed tool's supported version mechanism; electron-builder reads package.json).
+Bind the selected source revision to the artifact version. Keep package/application manifests consistent before building and signing, using the installed tool's supported version mechanism. In tag mode, compare against the tag; in dispatch mode, validate the selected ref/version. Do not introduce a tag requirement into another trigger's workflow.
 
-## Desktop apps: dmg / msi / AppImage
+## Build candidates and gate publication
 
-The full per-stack release recipes live in the stack references — this file holds the shared principles:
+Use the detected stack's build recipe:
 
-- **Tauri** → [references/rust-tauri.md](rust-tauri.md) + [assets/workflows/release-tauri.yml](../assets/workflows/release-tauri.yml) (tauri-action, the smoothest path)
-- **Electron** → [references/electron.md](electron.md) (electron-builder candidates, then separately gated publication)
-- **Wails** → [references/wails.md](wails.md) (no helper action; manual matrix + create-dmg / NSIS / linuxdeploy)
-- **macOS Swift app** → [references/swift-apple.md](swift-apple.md) (archive → Developer ID export → notarytool → create-dmg)
+- [Rust/Tauri](rust-tauri.md) and [the Tauri scaffold](../assets/workflows/release-tauri.yml).
+- [Electron](electron.md), [Wails](wails.md), or [Swift/Apple](swift-apple.md) for desktop candidates.
+- [Go](go.md), [Python](python.md), or [Node/TypeScript](node-ts.md) for CLI/package outputs; [Kotlin/Android](kotlin-android.md) for mobile builds.
 
-### Tauri
+Adapt the matrix to requested platforms, architectures and outputs. Verify runner/toolchain support before selecting images. For Tauri on macOS, account explicitly for Intel and Apple Silicon; aggregate checksums from the final matrix outputs when an installer requires a shared manifest. The Tauri scaffold remains blocked until project-specific signing and verification are implemented.
 
-Use [assets/workflows/release-tauri.yml](../assets/workflows/release-tauri.yml). `tauri-apps/tauri-action@v0` on a 3-OS matrix produces:
+Build without publishing. Keep signing credentials away from untrusted PR jobs and grant publication permissions only to a separate job gated on every requested target. Require verified final-payload publisher signatures, applicable native signatures/notarization and install/update evidence. Checksums or updater signatures alone do not meet that gate. Missing credentials or failed verification block publication; only an explicit user scope change narrows the release targets.
 
-- **macOS**: `.dmg` (+ `.app.tar.gz` for auto-updater)
-- **Windows**: `.msi` (+ `.exe` NSIS if configured in tauri.conf.json)
-- **Linux**: `.AppImage` + `.deb`
+## Optional CLI installer
 
-The template has no public upload path and deliberately stops until application-specific signing and verification are configured. Adapt these details:
+Use [assets/install.sh](../assets/install.sh) only for requested CLI tarballs. Each archive must contain exactly one regular nonempty file named as BIN at its root. Keep its OS/architecture asset names compatible with released installers. Desktop formats require a separate verified installation path.
 
-- The Tauri template does not generate a shared checksums manifest. If an installer depends on one, add an aggregation step after matrix completion that hashes the exact final assets, and test the installer's format-specific path.
+Configure REPO, BIN, asset names and an independently trusted public key. Authenticate the script before execution; never pipe an unverified download into a shell. Its contract is:
 
-- Linux runner needs `libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf` — without these the build fails 15 minutes in.
-- For Apple Silicon + Intel builds, add supported `macos-15-intel` (Intel) and `macos-15` (ARM) matrix entries with `tauri build --target` as needed; a single macos-latest only covers one arch. Verify current runner support before generating workflows; macos-13 is retired.
-- Signing is mandatory for distributed builds. Tauri updater signatures do not replace Apple Developer ID/notarization, Windows Authenticode, or Linux artifact/package signatures. Configure the applicable identities and verify actual outputs; missing credentials or verification failures block publication. The template builds candidates only and deliberately requires project-specific signing/verification before it can be enabled.
+- Select an explicit `VERSION` or resolve the latest GitHub release; latest discovery is not authenticated freshness.
+- Verify detached artifact and `checksums.txt` signatures with the pinned publisher key.
+- Require exactly one signed `# version <selected-version>` line and one matching, valid SHA-256 row; missing, duplicate or mismatched entries fail installation.
+- Install to `~/.local/bin` without sudo, preserving an existing installation on verification failure.
 
-### Electron
+## Verify the configured workflow
 
-`electron-builder` with a matrix job; prepare signed candidates before publishing through a separately gated job:
+Run applicable checks/builds, validate workflow syntax, and inspect trigger/version binding, permission boundaries and the aggregate publication gate. Test hooks/installers in isolated fixtures. Verify selected local artifacts or authenticated draft assets before publication; anonymous `/releases/latest` cannot select a draft.
 
-```yaml
-- run: pnpm build && pnpm exec electron-builder --publish never
-# Sign/notarize and verify every final artifact before a separate gated publication job.
-```
-
-The separate publisher must require all target verification jobs to succeed and confirm the intended version/ref. A tag condition alone is not a signature gate. Targets in package.json `build`: `mac.target: dmg`, `win.target: msi` (or nsis), `linux.target: AppImage`.
-
-## CLI tools: binary matrix
-
-Cross-compile per target in a matrix (`cargo build --release --target <triple>`, `go build`, PyInstaller, `pkg`/`bun build --compile`), upload `myapp-<os>-<arch>.tar.gz` plus detached publisher signatures for every final payload and a signed `checksums.txt` to the release. Each CLI tarball for the bundled installer must contain exactly one regular nonempty file named as BIN at archive root. The curl script depends on a **stable asset naming scheme** — decide it here and keep it forever, because the install script hard-codes it.
-
-## Curl install script
-
-Use [assets/install.sh](../assets/install.sh) as the template and fill in REPO/BIN/asset names and an independently trusted public key. Authenticate the script before executing it; do not pipe an unverified download into a shell. The default template refuses an unconfigured key. Requirements it handles:
-
-- OS/arch detection (`uname -s/-m`) → asset name
-- Latest release resolution via the GitHub API, or `VERSION=v1.2.3` env override
-- Required checksum verification against exactly one matching entry in the release's `checksums.txt`; missing, duplicate, malformed, or mismatched checksums stop installation. A checksum detects corruption but does not authenticate the publisher when the same release hosts both files. Verify the mandatory detached artifact and manifest signatures with the pinned publisher key. The manifest must include exactly one `# version <selected-version>` line; missing or mismatched signed context blocks installation. Explicit VERSION selection pins a version; latest discovery is not an authenticated freshness policy.
-- Install to `~/.local/bin` (no sudo) with PATH hint if needed
-
-For desktop apps the curl story is weaker: Linux can download the AppImage directly; macOS can download and `hdiutil attach` the dmg; Windows users should just get the msi link — print it rather than attempting install. Serve the script from the repo (`https://raw.githubusercontent.com/OWNER/REPO/main/install.sh`) or a release asset.
-
-## First release verification
-
-1. Run applicable checks on the candidate and verify its version matches the intended tag. Use explicit read-only CI permissions and job-scoped `contents: write` for GitHub release uploads; resolve production action refs to verified SHAs.
-2. When authorized, create and push only the intended tag: `git tag v0.1.0` then `git push origin v0.1.0`. Do not use `git push --tags`.
-3. Verify all requested platforms pass native signing/notarization, detached signatures, expected-identity checks and signed-manifest completeness before uploading any release assets. Inspect workflow results and test selected artifacts. A draft release is not available through anonymous `/releases/latest`; use authenticated draft downloads or selected local artifacts before publication.
-4. Publish only within the requested authorization, then test the explicit published version on a clean machine. Verify signatures/checksums and the actual install/update path.
-5. Record which hosted platform/signing checks ran, which remain unavailable, and the recovery path for a faulty release. For service rollout or stateful changes, use the available kk-release-delivery guidance.
+Report configured automation and actual checks separately from hosted/signing steps that remain unrun. Execute a release only when it is within the requested scope; pass candidate identity and verification evidence to promotion, then verify the explicit published version.
