@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "static-html-inventory",
+  "pages": {
+    "draft.html": {
+      "sha256": "6bb4c06aa73712d64d3f20f48ab70ef56767799fd63aca53f0e5c49b6b0256bc",
+      "bytes": 4512,
+      "titles": [
+        "Onboarding email templates: welcome and first-step reminder"
+      ],
+      "descriptions": [
+        "Adapt two illustrative onboarding emails with subject lines and practical customization notes for a customer's first setup task."
+      ],
+      "canonicals": [
+        "https://example.test/templates/onboarding/"
+      ],
+      "robots": [],
+      "headings": [
+        {
+          "level": "h1",
+          "text": "Help a new customer take the first step"
+        },
+        {
+          "level": "h2",
+          "text": "1. Welcome and a clear first task"
+        },
+        {
+          "level": "h2",
+          "text": "2. A gentle first-step reminder"
+        },
+        {
+          "level": "h2",
+          "text": "Make one email ready to use"
+        }
+      ],
+      "links": [
+        {
+          "href": "/templates/",
+          "text": "Email template hub",
+          "rel": null,
+          "aria_label": null
+        },
+        {
+          "href": "/templates/",
+          "text": "Browse the existing email template hub",
+          "rel": null,
+          "aria_label": null
+        }
+      ],
+      "images": [],
+      "table_rows": [],
+      "table_count": 0,
+      "json_ld": [],
+      "json_ld_errors": []
+    }
+  },
+  "limitations": "Static UTF-8 HTML only; no network, rendering, headers, indexing, truth or conversion verification."
+}

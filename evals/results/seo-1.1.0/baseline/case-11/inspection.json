@@ -1,0 +1,14 @@
+{
+  "h1_count": 1,
+  "example_count": 2,
+  "canonical": [
+    "https://example.test/templates/onboarding/"
+  ],
+  "links": [
+    "/templates/",
+    "/templates/"
+  ],
+  "script_count": 0,
+  "checks_passed": true,
+  "inspection_type": "local static HTML source and parsed content; no browser render or live target check"
+}

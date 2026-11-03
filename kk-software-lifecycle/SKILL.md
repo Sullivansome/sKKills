@@ -34,6 +34,7 @@ Select only the relevant skills available in the current environment. These are 
 | Can we run it and respond to failure? | `kk-production-ops` | User-facing signals, runbooks, recovery evidence |
 | Can it evolve or be retired safely? | `kk-software-evolution` | Compatibility inventory, migration/deprecation/retirement evidence |
 | Does an AI feature work reliably? | `kk-ai-evaluation` | Versioned evals, tool-boundary tests, quality/cost/latency results |
+| Can the right audience discover this website through search? | `kk-seo-growth` | Indexability evidence, intent-to-page fit, supported claims, discovery and outcome measurements |
 
 Use installed stack, design, accessibility, database, and platform specialists when their concrete expertise is needed. This collection coordinates those capabilities; it does not replace their API documentation.
 

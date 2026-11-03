@@ -1,0 +1,29 @@
+{
+  "skill_name": "kk-ios-app-idea-critic",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Quick critique: I want to submit ten identical iPhone habit trackers, one per color theme, under separate Bundle IDs. Each has the same flow and features. I think the colors make them original. Do not browse or submit anything; assess this pitch with policy evidence explicitly unverified.",
+      "expected_output": "A quick product critique with an explicit originality risk gate, a substantive redesign, and clearly bounded policy evidence.",
+      "files": [],
+      "expectations": [
+        "Identifies separate Bundle IDs for identical theme variants as a serious self-duplication risk and does not let a numeric score override it.",
+        "Suggests consolidating themes into one useful product rather than cosmetic changes or review evasion.",
+        "Reports originality risk even in Quick mode, while labeling current Apple policy and competitor evidence unverified.",
+        "Does not claim certain rejection or approval, browse against the request, or submit an app."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Evaluate an iPhone couples widget that promises an always-live shared mood display and a recurring subscription. We only have mockups; no partner interviews, working sync, platform feasibility checks or competitor research. Give a concept-only critique without browsing, coding or changing the product yet.",
+      "expected_output": "A bounded critique of two-person activation, repeat value, widget feasibility, originality uncertainty and the smallest validation experiment.",
+      "files": [],
+      "expectations": [
+        "Questions widget update and background assumptions without claiming arbitrary continuous updates are supported.",
+        "Examines both partners activation, consent, privacy, and subscription value rather than inferring demand from mockups.",
+        "Keeps originality and current platform evidence explicitly unresolved and avoids an unconditional build or submission recommendation.",
+        "Proposes a small test with observable success and failure conditions without implementing or contacting users."
+      ]
+    }
+  ]
+}

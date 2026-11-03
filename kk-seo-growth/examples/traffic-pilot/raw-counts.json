@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "baseline": {
+    "treatment-0": 100,
+    "control-0": 110,
+    "control-1": 90
+  },
+  "followup": {
+    "treatment-0": 140,
+    "control-0": 154,
+    "control-1": 126
+  }
+}

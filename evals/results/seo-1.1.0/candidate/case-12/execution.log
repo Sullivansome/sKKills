@@ -1,0 +1,4 @@
+Ran supplied scripts/skill_release.py identity; saved exact JSON to skill-identity.json.
+Created experiments.csv and page-cohorts.csv using supplied asset headers.
+Checked: two unique fixed treatment URLs; exact candidate hash on ledger and both members; unknown deployment/baseline values blank.
+No traffic checker comparison attempted: no observations or deployment exist.

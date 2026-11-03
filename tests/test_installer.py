@@ -1,8 +1,10 @@
 """Exercise the actual shell installer with local release fixtures; never network."""
 import hashlib
 import io
+import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -47,6 +49,7 @@ class InstallerTests(unittest.TestCase):
                         INSTALL_DIR=str(self.dest), VERSION='v1.2.3',
                         FIXTURE_RELEASE=str(self.release), FIXTURE_ARCH='x86_64',
                         FIXTURE_OS='Linux')
+        (self.mockbin / 'python3').symlink_to(sys.executable)
         self.make_tool('uname', '''import os, sys
 print(os.environ['FIXTURE_OS'] if sys.argv[1] == '-s' else os.environ['FIXTURE_ARCH'])
 ''')
@@ -55,7 +58,7 @@ args=sys.argv[1:]
 url=next(a for a in args if a.startswith('https://'))
 dest=pathlib.Path(args[args.index('-o')+1])
 if url == 'https://api.github.com/repos/fixture/example/releases/latest':
-    dest.write_text('{"tag_name": "v1.2.3"}')
+    dest.write_text(os.environ.get('FIXTURE_RELEASE_JSON', '{"tag_name": "v1.2.3"}'))
 else:
     prefix='https://github.com/fixture/example/releases/download/v1.2.3/'
     if not url.startswith(prefix): sys.exit(22)
@@ -111,6 +114,7 @@ else:
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(self.installed.read_bytes(), b'previous working version')
         self.assertEqual(sorted(p.name for p in self.dest.iterdir()), ['myapp'])
+        return result
 
     def test_verified_install_replaces_existing_binary(self):
         result = self.run_installer()
@@ -120,6 +124,60 @@ else:
 
     def test_latest_version_resolution(self):
         self.env.pop('VERSION')
+        result = self.run_installer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.installed.read_bytes(), self.payload)
+
+    def test_latest_version_with_realistic_json(self):
+        self.env.pop('VERSION')
+        response = {
+            'url': 'https://api.github.com/repos/fixture/example/releases/123',
+            'author': {'login': 'fixture', 'tag_name': 'not-the-release'},
+            'body': 'Release notes mentioning "tag_name": "not-the-release"',
+            'tag_name': 'v1.2.3',
+            'assets': [],
+        }
+        responses = [json.dumps(response), json.dumps(response, indent=2),
+                     json.dumps(response).replace('v1.2.3', r'v1\u002e2.3')]
+        for raw in responses:
+            with self.subTest(response=raw):
+                self.env['FIXTURE_RELEASE_JSON'] = raw
+                self.installed.write_bytes(b'previous working version')
+                result = self.run_installer()
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(self.installed.read_bytes(), self.payload)
+
+    def test_latest_rejects_invalid_response(self):
+        self.env.pop('VERSION')
+        responses = ['not JSON', '{}', '[]', 'null', '{"tag_name": "v1.2.3"',
+                     '{"tag_name": "v1.2.3"} trailing']
+        responses.extend(json.dumps({'tag_name': tag}) for tag in
+                         [None, 123, True, [], {}, '', '../escape', 'v1.2.3\n'])
+        for raw in responses:
+            with self.subTest(response=raw):
+                self.env['FIXTURE_RELEASE_JSON'] = raw
+                result = self.assert_rejected()
+                self.assertIn('valid tag_name string', result.stderr)
+
+    def hide_python_from_installer_path(self):
+        (self.mockbin / 'python3').unlink()
+        # Mock downloads still use their absolute interpreter; only the installer's
+        # PATH lacks Python. Provision every other installer dependency explicitly.
+        for tool in ('sh', 'awk', 'tar', 'mktemp', 'cp', 'chmod', 'mv', 'openssl',
+                     'cat', 'rm', 'mkdir', 'basename', 'sha256sum', 'shasum'):
+            source = shutil.which(tool)
+            if source:
+                (self.mockbin / tool).symlink_to(source)
+        self.env['PATH'] = str(self.mockbin)
+
+    def test_latest_requires_json_parser(self):
+        self.env.pop('VERSION')
+        self.hide_python_from_installer_path()
+        result = self.assert_rejected()
+        self.assertIn('python3 is required for latest-release discovery', result.stderr)
+
+    def test_explicit_version_does_not_require_json_parser(self):
+        self.hide_python_from_installer_path()
         result = self.run_installer()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.installed.read_bytes(), self.payload)

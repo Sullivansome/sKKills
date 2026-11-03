@@ -1,0 +1,27 @@
+{
+  "skill_name": "kk-game-idea-critic",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Quick critique of this game idea: a paid PC-only Godot puzzle game where every move rotates the room and changes which surfaces can carry the player. I work solo, have six weeks, and want a 30-minute authored experience. Use only this pitch; no market research or implementation.",
+      "expected_output": "A concise critique that preserves the paid PC and authored-puzzle constraints, identifies the actual player decision, and proposes a small playable test.",
+      "files": [],
+      "expectations": [
+        "Preserves the paid PC-only model and six-week scope rather than applying mobile free-to-play defaults.",
+        "Distinguishes the rotation hook from demonstrated play value; does not invent market evidence or playtest results.",
+        "Defines a small playable experiment with an observable failure condition rather than a feature wishlist."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Compare two mobile game concepts for an AI-first solo build: A is a colony sim with 80 resources and 12 crafting chains; B has five resources but every building consumes another building as fuel. No prototypes, player data or competitor research exist. Compare the concepts only and identify what to test before choosing.",
+      "expected_output": "A comparison of the core decisions, interaction potential, production scope, and uncertainties, followed by falsifiable prototype tests.",
+      "files": [],
+      "expectations": [
+        "Does not treat the larger resource count or the novel fuel rule as proof of a better game.",
+        "Separates concept judgment from evidence confidence and commercial demand.",
+        "Identifies what a player must actually decide and a cheap test that could disprove each concept."
+      ]
+    }
+  ]
+}

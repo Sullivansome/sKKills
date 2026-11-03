@@ -1,0 +1,11 @@
+# SEO 1.0.0 / 1.1.0 matched forward-test
+
+Executed 2026-10-12. Two independent agents used frozen prior/candidate packages on the same 13 tasks, with no network, accounts, publishing, scheduling, or grading expectations. Tasks 0–9 are existing cases, 10 tests ambiguous exported zero, and 11–12 are held-out artifact tasks. Each package was exercised in one session with tasks in the same order. Exact model identifiers/settings were not exposed; both inherited the parent configuration without overrides.
+
+[Task inputs](tasks.json), [separate rubric](rubric.json), [run configuration and fingerprints](run-config.json), and [reviewer grades](grades.json) are retained. Baseline and candidate directories contain every answer, relevant commands, HTML artifacts, and ledgers. Raw command logs retain temporary workspace paths as execution provenance; portable task inputs and fixture files can be recovered from the saved release archives and task definitions. The candidate's isolated unregistered status at execution time was correct: publication occurred only after this test.
+
+Both packages received 12 full case passes and one partial. In case 9, both prevented retrospective traffic attribution and distinguished package content from labels but omitted the rubric's explicit version-bump reminder. This is a shared omission, not evidence of a candidate regression. No difference in overall case grades is claimed as an improvement. Future assessments should include repeated runs and tasks not authored alongside the guidance.
+
+The candidate used the new traffic checker in case 8; it exited 2 and withheld comparisons because exact cohort membership was absent. Its case 10 preserved an ambiguous exported zero as missing with raw provenance. Case 12 produced a single cohort ledger and fixed URL membership, with unknown deployment/baseline fields left blank; the baseline also produced useful planning artifacts. Both created canonical-only edits and complete illustrative HTML drafts. The parent independently compared the canonical edit bytes and inspected draft content and experiment records.
+
+These are task-level observations. They do not establish live SEO lift, statistically reliable skill superiority, automatic skill-selection accuracy, or browser-rendered usability. No production traffic was measured.

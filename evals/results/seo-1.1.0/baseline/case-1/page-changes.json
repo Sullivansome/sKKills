@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "static-html-diff",
+  "pages_removed": [],
+  "pages_added": [],
+  "changed_pages": [
+    {
+      "page": "evals/files/landing.html",
+      "metadata_changes": {
+        "canonicals": {
+          "before": [
+            "https://preview.example.test/sketch-dash/"
+          ],
+          "after": [
+            "https://example.test/sketch-dash/"
+          ]
+        }
+      },
+      "removed_elements": {},
+      "json_ld_errors_after": []
+    }
+  ],
+  "limitations": "Review flags, not an automatic pass/fail. Reworded elements can appear removed. Inspect source diff and rendered page."
+}

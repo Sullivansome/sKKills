@@ -1,0 +1,8 @@
+{
+  "workspace": "/var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_",
+  "candidate_sha256": "5b9cafe1c6219fb84b4d2f8ea6fdb6d5c70bce183be7059f5cd331b848976699",
+  "baseline_sha256": "3c1e35ae7ddb304721025a3e666ebdaeacd6be95550963aafef69ee0666c3d32",
+  "task_count": 13,
+  "model": "inherited parent model, no override; exact runtime model/settings not exposed",
+  "design": "one independent agent per package; same ordered tasks in one session per package; no grading expectations; no network or production actions; one pass, not a statistical benchmark"
+}

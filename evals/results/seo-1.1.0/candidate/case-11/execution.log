@@ -1,0 +1,4 @@
+Local HTMLParser inspection: PASS. One expected canonical, one H1, two subjects, two customization notes, two /templates/ anchors; zero scripts. Source read back and inspected.
+python3 /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/kk-seo-growth/scripts/page_inventory.py inventory /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-11 --out /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-11/inventory.json
+
+No rendering engine used; hub destination not fetched.

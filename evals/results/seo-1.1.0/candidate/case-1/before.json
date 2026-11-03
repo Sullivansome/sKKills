@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "static-html-inventory",
+  "pages": {
+    "landing.html": {
+      "sha256": "88c4d6acaab8411e63355e7c7a8f30730befe7eac2202d29a1a8e042756261b2",
+      "bytes": 633,
+      "titles": [
+        "Sketch Dash — a drawing game"
+      ],
+      "descriptions": [
+        "Draw a route and guide your character through obstacles."
+      ],
+      "canonicals": [
+        "https://preview.example.test/sketch-dash/"
+      ],
+      "robots": [
+        {
+          "name": "robots",
+          "content": "index,follow"
+        }
+      ],
+      "headings": [
+        {
+          "level": "h1",
+          "text": "Draw your way through the course"
+        }
+      ],
+      "links": [
+        {
+          "href": "https://store.example.test/sketch-dash",
+          "text": "View the game in the store",
+          "rel": null,
+          "aria_label": null
+        }
+      ],
+      "images": [],
+      "table_rows": [
+        {
+          "table": 0,
+          "text": "Platform Controls"
+        },
+        {
+          "table": 0,
+          "text": "iPhone Touch"
+        }
+      ],
+      "table_count": 1,
+      "json_ld": [],
+      "json_ld_errors": []
+    }
+  },
+  "limitations": "Static UTF-8 HTML only; no network, rendering, headers, indexing, truth or conversion verification."
+}

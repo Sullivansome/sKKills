@@ -18,15 +18,15 @@ Use the detected stack's build recipe:
 
 Adapt the matrix to requested platforms, architectures and outputs. Verify runner/toolchain support before selecting images. For Tauri on macOS, account explicitly for Intel and Apple Silicon; aggregate checksums from the final matrix outputs when an installer requires a shared manifest. The Tauri scaffold remains blocked until project-specific signing and verification are implemented.
 
-Build without publishing. Keep signing credentials away from untrusted PR jobs and grant publication permissions only to a separate job gated on every requested target. Require verified final-payload publisher signatures, applicable native signatures/notarization and install/update evidence. Checksums or updater signatures alone do not meet that gate. Missing credentials or failed verification block publication; only an explicit user scope change narrows the release targets.
+Build without publishing. Keep signing credentials away from untrusted PR jobs and grant publication permissions only to a separate job gated on every requested target. For directly distributed payloads, require verified final-payload publisher signatures, applicable native signatures/notarization and install/update evidence. Checksums or updater signatures alone do not meet that gate. App stores and language registries instead require their own signing (Apple distribution signing, Play upload key, Maven Central PGP) and supported provenance such as PyPI Trusted Publishing attestations or npm provenance; do not block those channels on detached signatures that no client checks. Missing credentials or failed verification block publication; only an explicit user scope change narrows the release targets.
 
 ## Optional CLI installer
 
-Use [assets/install.sh](../assets/install.sh) only for requested CLI tarballs. Each archive must contain exactly one regular nonempty file named as BIN at its root. Keep its OS/architecture asset names compatible with released installers. Desktop formats require a separate verified installation path.
+Use [assets/install.sh](../assets/install.sh) only for requested CLI tarballs. Each archive must contain exactly one regular nonempty file named as BIN at its root. The installer requests `<BIN>-<OS>-<arch>.tar.gz` with `uname -s` casing and normalized architectures: `myapp-Linux-x86_64.tar.gz`, `myapp-Linux-aarch64.tar.gz`, `myapp-Darwin-x86_64.tar.gz`, `myapp-Darwin-aarch64.tar.gz`. Publish exactly those names for every supported target (a universal macOS binary is published under both Darwin names), or change the installer's `asset=` line and its tests together. Go-style names such as `linux-amd64` do not match. Desktop formats require a separate verified installation path.
 
 Configure REPO, BIN, asset names and an independently trusted public key. Authenticate the script before execution; never pipe an unverified download into a shell. Its contract is:
 
-- Select an explicit `VERSION` or resolve the latest GitHub release; latest discovery is not authenticated freshness.
+- Select an explicit `VERSION` or resolve the latest GitHub release using Python 3's JSON parser. Only latest discovery requires `python3`; an explicit `VERSION` avoids that dependency. Latest discovery is not authenticated freshness.
 - Verify detached artifact and `checksums.txt` signatures with the pinned publisher key.
 - Require exactly one signed `# version <selected-version>` line and one matching, valid SHA-256 row; missing, duplicate or mismatched entries fail installation.
 - Install to `~/.local/bin` without sudo, preserving an existing installation on verification failure.

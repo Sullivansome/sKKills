@@ -1,6 +1,6 @@
 ---
 name: kk-security-review
-description: Threat-model abuse paths, investigate security exposure, or review application, infrastructure, dependency, and agent trust boundaries. Use for security assessments and scoped hardening; specified bug fixes stay with implementation, with this skill supporting unresolved security risks.
+description: Threat-model abuse paths, investigate security exposure, or assess application, infrastructure, dependency, CI, and agent trust boundaries across a system. Use for security assessments and scoped hardening beyond a single-diff scan, which an agent's built-in review can cover; specified bug fixes stay with implementation.
 ---
 
 # Security Review

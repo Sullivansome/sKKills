@@ -1,0 +1,1 @@
+run_id,observed_at,timezone,product,interface,model_if_known,language,market,session_state,search_mode_if_known,prompt_id,exact_prompt,branded_prompt,repetition,brand_mentioned,product_recommended,cited_urls,answer_artifact,limitations

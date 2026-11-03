@@ -30,4 +30,4 @@ Standard Node CI (see [assets/workflows/ci.yml](../assets/workflows/ci.yml)) wit
 
 ## Release
 
-Next.js apps deploy rather than ship installers — the release flow is usually Vercel/self-host deploy on merge to main, with tags for versioning. Point the user to `release.md` only if they also ship a desktop wrapper (Tauri/Electron around the Next app) or a CLI.
+Next.js apps usually use a service deployment flow. Preserve the existing provider, trigger and source/version binding; tags are optional. Point the user to `release.md` for requested artifact automation, such as a desktop wrapper (Tauri/Electron around the Next app) or a CLI.

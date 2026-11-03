@@ -1,0 +1,10 @@
+python3 /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/kk-seo-growth/scripts/validate_traffic.py --observations /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-8/observations.csv --cohorts /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-8/cohorts.csv --experiments /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-8/experiments.csv
+exit=2
+{
+  "valid": false,
+  "errors": [
+    "cohorts.csv: no data rows"
+  ],
+  "warnings": [],
+  "comparisons": []
+}

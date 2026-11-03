@@ -1,0 +1,7 @@
+python3 /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/kk-seo-growth/scripts/page_inventory.py inventory /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/before --out /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/before.json
+
+python3 /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/kk-seo-growth/scripts/page_inventory.py inventory /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/after --out /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/after.json
+
+python3 /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/kk-seo-growth/scripts/page_inventory.py diff /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/before.json /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/after.json --out /var/folders/3n/9kw6fr4s7jl3smnkt2kh2q1r0000gn/T/seo-matched-eval-_sy6m42_/candidate/outputs/case-1/page-changes.json
+
+PASS: byte-equivalent after reversing sole canonical replacement. Input unchanged.

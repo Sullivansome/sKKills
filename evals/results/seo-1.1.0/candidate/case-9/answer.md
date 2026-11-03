@@ -1,0 +1,5 @@
+Do not attribute last month's traffic to the copy installed yesterday: installing a skill did not change the website, and the installation postdates that traffic.
+
+What can be recorded now, without changing files or analytics: the reported installation date, label 1.0.0, that it is a revised copy, and that no site intervention occurred. The label alone cannot identify its contents. A current package fingerprint could identify this copy if captured in a later authorized recording step; it would not recover older contents.
+
+Older unavailable packages remain `legacy-unknown`; do not retroactively assign their traffic or site work to today's hash. Site deployment revision/time, affected URLs and historical skill identity remain unknown unless independent records establish them. Record a future intervention only when it is actually applied, with exact package hash, site revision and publication time; its measurement window begins from that intervention, not installation. No files or analytics changed.

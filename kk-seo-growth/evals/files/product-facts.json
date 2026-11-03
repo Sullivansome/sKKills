@@ -1,0 +1,18 @@
+{
+  "publisher": "Maker of Local Scribe",
+  "our_product": {
+    "name": "Local Scribe",
+    "verified_platform": "macOS",
+    "verified_task": "Dictates plain text into a local document",
+    "current_price": null,
+    "medical_accuracy_test": null
+  },
+  "competitor": {
+    "name": "Cloud Scribe",
+    "source_type": "undated vendor excerpt supplied by user",
+    "claim": "Supports transcription in many languages",
+    "current_price": null,
+    "independent_test": null
+  },
+  "keyword_volume": null
+}

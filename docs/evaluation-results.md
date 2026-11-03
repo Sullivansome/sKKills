@@ -1,10 +1,16 @@
 # Evaluation record
 
-Initial evaluation: 2026-09-10. Updated: 2026-09-13. These results distinguish package correctness, executable installer behavior, description selection, and limited behavioral skill samples. They are not a benchmark of general agent effectiveness. Skill links use the current `kk-` names; the initial runs preceded the namespace change.
+Initial evaluation: 2026-09-10. Updated: 2026-10-13. These results distinguish package correctness, executable installer behavior, description selection, and limited behavioral skill samples. They are not a benchmark of general agent effectiveness. Skill links use the current `kk-` names; the initial runs preceded the namespace change.
 
 ## Authored cases
 
-The initial collection had 27 prompts. It now has **41 behavioral cases**: twelve bootstrap cases, four distribution cases, three lifecycle cases, and two per remaining skill. Every case has nonempty grading expectations. Four added bootstrap cases include raw fixtures for React Router/legacy React Query, Query-only usage in Next.js, scoped TanStack Router, and a generic Go CLI. The full suite has **not** been executed. The separate routing set now has 33 lead-skill selection cases; actual runtime automatic-selection precision/recall has not been measured.
+The initial collection had 27 prompts. It now has **57 behavioral cases**: eleven SEO-growth cases, twelve bootstrap cases, four distribution cases, three lifecycle cases, three release-delivery cases, and two per remaining skill. Every case has nonempty grading expectations. Four added bootstrap cases include raw fixtures for React Router/legacy React Query, Query-only usage in Next.js, scoped TanStack Router, and a generic Go CLI. The full suite has **not** been executed. The separate routing set now has 42 lead-skill selection cases; actual runtime automatic-selection precision/recall has not been measured.
+
+## Idea critic imports — 2026-10-13
+
+Imported the supplied `game-idea-critic.zip` and `ios-app-idea-critic.zip` as [kk-game-idea-critic](../kk-game-idea-critic/SKILL.md) and [kk-ios-app-idea-critic](../kk-ios-app-idea-critic/SKILL.md). Preserved all eight supplied files, changing only the skill names and the iOS skill's reference to the game skill. Added two behavioral cases per skill and four routing cases covering concept critique versus ordinary implementation. The collection now contains 17 skills.
+
+Repository structural validation, both official metadata checks, all nine validator regression tests, archive-content comparison with the namespace substitutions, and diff whitespace checks passed. The new behavioral and routing cases have not received model runs. No global installation, commit, push, or publication was performed.
 
 ## Initial migration/release behavioral sample
 
@@ -83,3 +89,56 @@ Narrowed implementation/security selection to the requested operation, clarified
 The four revised entrypoints and bootstrap release reference contain 3,355 whitespace-delimited words, down from 4,451 at `2bcc302` (24.6%). This measures text reduction, not token savings or behavioral improvement. Added bootstrap case 11 with a raw manual-release contract and routing cases 31–32 for manual pipeline setup and a specified auth UI implementation. The collection now has 41 authored behavioral cases and 33 routing cases. These additions and the revised descriptions have not received model runs; earlier selection results apply only to their recorded catalogs.
 
 Repository structural validation, official metadata checks for all four edited entrypoints, all 33 local tests, shell syntax, and diff whitespace checks passed. No hosted build, release, signing service or automatic skill-selection evaluation was executed in this follow-up.
+
+## Bootstrap review fixes, 2026-10-02
+
+Corrected project-reference typechecking guidance and its Electron/TanStack/Wails callers; supplied the Apple export archive path, ZIP creation and explicit app-stapling sequence; removed unconditional tag assumptions from platform recipes; and replaced the installer's line-based release parsing with Python 3 JSON parsing. Python is required only for latest-release discovery, not an explicit `VERSION` install. The README now describes selective installation and identifies generic implementation and lifecycle coordination as consolidation candidates; all 14 skill identifiers remain available.
+
+Local macOS verification:
+
+- All **37 tests passed**: 28 installer tests and 9 validator regressions. New installer checks cover compact/pretty/escaped JSON, nested misleading fields, malformed responses and invalid tag types, missing Python, and explicit-version installation without Python. Existing-install preservation remains checked on rejection.
+- The realistic JSON test failed against the previous installer in all three subcases, confirming regression sensitivity. Downloads remained mocked and signatures used ephemeral test keys.
+- An isolated TypeScript 5.9.3 fixture with two referenced source projects passed with valid code. Both `tsc -b --force` and per-project `tsc --noEmit -p` detected deliberate type errors in each project.
+- Local `xcodebuild -help` confirmed the export argument contract. The documented `ditto` command preserved the root and content of a synthetic app bundle in a ZIP. No actual Xcode archive export, production signing, notarization or store submission was performed.
+- Structural validation passed for 14 skills and 41 authored cases, along with shell syntax and diff whitespace checks. Hosted CI and model behavioral/routing evaluations were not run.
+
+## Collection review fixes, 2026-10-02
+
+- Scoped the signed-payload rule to direct distribution: downloads, install scripts, and repositories/feeds/taps the project operates. App stores and language registries (App Store/TestFlight, Play, PyPI, npm, crates.io) now use their required signing and provenance/attestations instead of being blocked on detached signatures no client verifies. Removed the signing clause from `kk-platform-infrastructure`. Added release-delivery case 2 (PyPI + Play without a detached key) as a regression case; it has not received a model run.
+- Bootstrap detection now applies every matching row (desktop wrapper plus frontend framework), recognizes `@tauri-apps/cli` and Groovy `build.gradle`, and detects per workspace in monorepos.
+- Electron's example Windows target is NSIS because electron-updater does not update MSI installs. Kotlin CI relies on `setup-gradle`'s default wrapper validation instead of contradictory duplicate advice. Python no longer hard-codes Ruff's `target-version`; PyPI publishing uses Trusted Publishing.
+- The installer's exact asset names (`<BIN>-<uname -s>-<arch>.tar.gz`) are documented in the release and Go references.
+- Action references in templates and references moved to current majors after confirming the used inputs exist: checkout v7, setup-node v7, pnpm/action-setup v6, setup-python v7, setup-java v6, setup-go v7, setup-gradle v6, action-gh-release v3, tauri-action v1, and setup-uv v10.2.0 (no floating major tag after v7). Templates still require resolving to verified SHAs.
+- Narrowed `kk-security-review` and `kk-software-verification` descriptions where they overlap built-in diff review.
+
+Structural validation, local tests and shell checks were rerun; no model behavior or routing evaluation was executed.
+
+## SEO growth integration, 2026-10-03
+
+Imported the reviewed `seo-growth` package as `kk-seo-growth`. Narrowed its discovery description, made workflow stages and templates conditional on the requested outcome, and kept the dated personal site snapshot in [optional project notes](seo-site-context.md) outside the reusable package. Added five behavioral cases with raw fixtures and five routing cases, bringing the collection to **15 skills, 47 authored behavioral cases, and 38 routing cases**. These new behavior and routing cases have not received model runs.
+
+Fixed the offline HTML helper's optional row closures, nested-table scoping, inline word boundaries, and JSON-LD isolation from visible text. Its ten bundled tests are also discovered by the repository CI command. The regression suite failed against the original helper and passed after the corrections; it covers inventory output, actual before/after diffs, CLI execution, and missing-input handling.
+
+Local macOS verification: all **47 tests passed** (28 installer, 9 validator, 10 SEO helper); repository structural validation, official skill metadata validation, local resource and icon paths, and tracked-diff whitespace checks passed. The helper remains a static UTF-8 HTML inventory, not a browser, complete HTML5 parser, crawler, or proof of preservation/indexing. No website deployment, live SEO result, hosted CI, or model behavioral evaluation is claimed.
+
+## Versioned SEO release, 2026-10-12
+
+Released the first explicitly versioned SEO package, 1.0.0. Added a programmatic SEO decision/data/publishing workflow, HTML sitemap and category-navigation guidance, a versioned traffic evaluation contract, and a reproducible snapshot helper. Release artifacts are stored under `releases/kk-seo-growth/`; the archive contains the exact package and a manifest of file hashes. Earlier unversioned activity is not assigned a fabricated release identity.
+
+Five new authored scenarios cover record eligibility and repeat imports, unsupported city permutations, HTML versus machine-readable sitemaps, a synthetic confounded traffic comparison, and historical version attribution. The collection now contains **15 skills, 52 authored behavioral cases, and 38 routing cases**. The five new scenarios have not received model runs.
+
+All **52 local tests passed** (28 installer, 9 validator, 10 HTML inventory, 5 release helper). New executable checks establish fingerprint sensitivity, cache exclusion, deterministic archives, archive/manifest consistency, recoverable original identity after edits, refusal to overwrite snapshots, internal-symlink rejection, version validation, and CLI behavior. Repository structural validation, official skill metadata validation, and CSV header/row consistency checks passed. These establish local package and helper properties, not model superiority or traffic improvement.
+
+The release is prepared for future site experiments; no website was deployed, analytics account connected, live traffic baseline collected, or recurring monitor scheduled. No production traffic result is claimed.
+
+## SEO release safeguards and matched evaluation, 2026-10-12
+
+Release 1.1.0 adds an explicit package file list; rejection of unexpected files; stable, modified, unregistered and development states; registry/archive fingerprint verification; refusal to reuse a released version; and repository validation of those constraints. The 1.0.0 release pair remains unchanged. Its legacy archive is verified without imposing the new file-list format retroactively.
+
+Added a standard-library normalized traffic validator, source-specific handling of exported unavailable values encoded as zero, and a complete synthetic ledger/cohort/raw-counts/observation/decision example. The validator withholds calculations on invalid records and withholds individual comparisons on partial or missing observations. It does not verify raw-export truth, infer causal effects, or select a winning skill. Real analytics were not accessed.
+
+One additional authored exported-zero scenario brings the collection to 53 behavioral cases (11 SEO) and 38 routing cases. Two independent agents executed the same 13 SEO tasks against exact 1.0.0 and 1.1.0 packages: the 11 authored tasks plus two held-out artifact tasks. Each completed a canonical-only edit, an original local HTML draft, and experiment-ledger/cohort artifacts. [Inputs, exact fingerprints, outputs, commands and reviewer grades](../evals/results/seo-1.1.0/README.md) are retained. Both received 12 full passes and one partial: the same historical-attribution answer omitted an explicit version-bump reminder. There is no aggregate score advantage or general superiority claim. The candidate additionally exercised its traffic checker on incomplete data and correctly withheld comparisons.
+
+These were single sessions per package, with fixed task order and no repeated trials. Exact runtime model identifier/settings were not exposed; both used the inherited configuration without overrides. Grading was by the parent agent against a separately retained rubric. The evaluation establishes bounded artifact/decision evidence, not browser-rendered usability, automatic routing accuracy, hosted CI, or live traffic improvement.
+
+Final local verification: all **69 repository tests passed**. Repository structural validation, official skill metadata validation, release-registry verification through the installed skill path, and diff whitespace checks passed. The installed 1.1.0 package fingerprint matches the exact candidate used in the paired evaluation: `5b9cafe1c6219fb84b4d2f8ea6fdb6d5c70bce183be7059f5cd331b848976699`.

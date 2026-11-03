@@ -1,0 +1,11 @@
+--- before/evals/files/landing.html
++++ after/evals/files/landing.html
+@@ -5,7 +5,7 @@
+   <title>Sketch Dash — a drawing game</title>
+   <meta name="description" content="Draw a route and guide your character through obstacles.">
+   <meta name="robots" content="index,follow">
+-  <link rel="canonical" href="https://preview.example.test/sketch-dash/">
++  <link rel="canonical" href="https://example.test/sketch-dash/">
+ </head>
+ <body>
+   <h1>Draw your way through the course</h1>

@@ -1,0 +1,17 @@
+{
+  "site": "https://example.test/",
+  "window": "2026-09-20 to 2026-09-27",
+  "ai_samples": {
+    "interface": "consumer web UI",
+    "sessions": 4,
+    "prompts": 4,
+    "brand_mentions": 3,
+    "answers_citing_our_url": 1,
+    "prompt_set": "Four unbranded English product-discovery questions",
+    "repetitions_per_prompt": 1
+  },
+  "search_console": null,
+  "analytics": null,
+  "purchases": null,
+  "baseline": null
+}

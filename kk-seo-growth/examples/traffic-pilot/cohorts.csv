@@ -1,0 +1,4 @@
+experiment_id,cohort_id,arm,page_id,canonical_url,page_type,first_published_at,changed_at,skill_version,skill_sha256,site_revision,prior_skill_identity,notes
+synthetic-pilot,pilot,treatment,treatment-0,https://example.test/treatment/0/,resource,2026-01-01,2026-08-31,1.1.0,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,synthetic-site-r2,legacy-unknown,Fictional records; all provenance identifiers illustrative
+synthetic-pilot,pilot,control,control-0,https://example.test/control/0/,resource,2026-01-01,,1.1.0,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,synthetic-site-r2,legacy-unknown,Fictional records; all provenance identifiers illustrative
+synthetic-pilot,pilot,control,control-1,https://example.test/control/1/,resource,2026-01-01,,1.1.0,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,synthetic-site-r2,legacy-unknown,Fictional records; all provenance identifiers illustrative

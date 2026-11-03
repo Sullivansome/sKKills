@@ -8,7 +8,7 @@ Wails apps combine a Go backend and JS frontend (usually in `frontend/`). Read [
 
 ## Frontend toolchain
 
-`frontend/` is a Vite + TS app — apply `node-ts.md` there (biome/eslint, tsc --noEmit, vitest). Wails generates TypeScript bindings in `frontend/wailsjs/` from Go methods — **exclude `wailsjs/` from lint/format** (it's generated) but keep it typechecked.
+For a Vite + TS frontend, apply `node-ts.md` in `frontend/`, including its project-aware typecheck command. Wails generates TypeScript bindings in `frontend/wailsjs/` from Go methods — **exclude `wailsjs/` from lint/format** (it's generated) but keep it typechecked.
 
 ## Pre-commit
 
@@ -16,7 +16,7 @@ The `pre-commit` framework handles both halves (see `rust-tauri.md` for the patt
 
 ## CI
 
-Two jobs (or one job with both setups): Go job with `actions/setup-go@v5` (cache on) running fmt/vet/lint/test; frontend job running the Node contract in `frontend/`. Add a `wails build` smoke step — it catches frontend/backend binding breakage.
+Two jobs (or one job with both setups): Go job with `actions/setup-go@v7` (cache on) running fmt/vet/lint/test; frontend job running the Node contract in `frontend/`. Add a `wails build` smoke step — it catches frontend/backend binding breakage.
 
 ## Release: dmg / msi(-ish) / AppImage
 
@@ -26,4 +26,4 @@ Wails has no equivalent of tauri-action — you orchestrate the matrix yourself:
 - **Windows**: `wails build -platform windows/amd64` → `.exe`. There's no native msi maker; ship the exe, or add NSIS (`makensis`) for an installer. Wails v3 is improving this — check the version.
 - **Linux**: `wails build -platform linux/amd64` → binary; AppImage via `linuxdeploy` + appimagetool (needs the `.desktop` file and icon; Wails generates them in `build/`).
 
-Require Windows Authenticode/timestamps and Linux payload/package signatures as well as Apple signing. Verify all final payload signatures and signer identities before publication. Upload all artifacts with `softprops/action-gh-release@v2` on tag push, with a stable naming scheme (`myapp-x.y.z-darwin-universal.dmg`, `...-windows-amd64.exe`, `...-linux-amd64.AppImage`) plus `checksums.txt` so [assets/install.sh](../assets/install.sh) can verify downloads. The bundled curl script is a CLI tarball template, not an AppImage/dmg installer. Implement and test an explicit per-format installer if requested; do not point tar extraction at an AppImage or dmg.
+Require Windows Authenticode/timestamps and Linux payload/package signatures as well as Apple signing. Verify all final payload signatures and signer identities before publication. Preserve the agreed trigger, source revision, version and channel as described in [release.md](release.md). For GitHub Releases, a separate gated publication job can use `softprops/action-gh-release@v3`; a tag-push trigger is optional. Use stable artifact names (`myapp-x.y.z-darwin-universal.dmg`, `...-windows-amd64.exe`, `...-linux-amd64.AppImage`) and a signed checksum manifest. The bundled [assets/install.sh](../assets/install.sh) handles CLI tarballs, not AppImage/DMG files. Implement and test a verified per-format installer if requested.

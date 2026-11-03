@@ -17,7 +17,11 @@ pnpm biome init
 
 ## Typecheck
 
-`tsc --noEmit` as a dedicated script. It must be separate from the build — bundlers like esbuild/vite strip types without checking them, so "the build passed" says nothing about type safety.
+Inspect the actual `tsconfig` files before choosing the command. For a single project that includes the application sources, use `tsc --noEmit -p tsconfig.json`. A solution-style root with `files: []` and `references` can return success without checking any application code when invoked with plain `tsc --noEmit`.
+
+For project references, preserve the project's supported `tsc -b` workflow and its configured emit behavior, or run `tsc --noEmit -p <config>` for each independent application/tooling config. If projects consume generated declarations from one another, build those dependencies in the required order. See the [TypeScript project-reference documentation](https://www.typescriptlang.org/docs/handbook/project-references.html).
+
+Keep a typecheck command separate from a bundler-only build: esbuild/Vite can strip types without checking them. In an isolated fixture, introduce a type error in each source project and verify that the chosen command fails, then restore valid code and verify success.
 
 ## Tests
 
@@ -25,13 +29,15 @@ pnpm biome init
 
 ## package.json scripts (the contract)
 
+This example assumes a single source-bearing `tsconfig.json`; replace `typecheck` with the project-aware command above for a solution-style root.
+
 ```json
 {
   "scripts": {
     "format": "biome format --write .",
     "format:check": "biome format .",
     "lint": "biome lint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "build": "...",
     "prepare": "husky"
@@ -66,5 +72,5 @@ If typecheck is fast enough (<5s on this repo), add a second hook `.husky/pre-pu
 
 ## CI notes
 
-- `pnpm/action-setup@v4` + `actions/setup-node@v4` with `cache: pnpm`, then `pnpm install --frozen-lockfile`.
-- For Electron apps, see [references/release.md](release.md) — electron-builder produces dmg/msi/AppImage from a matrix job.
+- `pnpm/action-setup@v6` + `actions/setup-node@v7` with `cache: pnpm`, then `pnpm install --frozen-lockfile`.
+- For Electron apps, see [electron.md](electron.md) — electron-builder produces dmg/NSIS/AppImage candidates from a matrix job.

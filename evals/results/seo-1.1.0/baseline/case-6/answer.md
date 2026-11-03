@@ -1,0 +1,3 @@
+Do not launch the 5,000 pages as proposed. High confidence: swapping city names supplies no distinct local utility, and absent availability data cannot support city-specific service claims. This creates repetitive location pages with a doorway-page risk; there is no evidence of demand or accurate local coverage.
+
+Use a useful general service page now if one is needed. Hold city candidates until each has verified service availability and materially useful local information, evidence/rights, stable identity, and a maintenance owner. Then inspect a small representative pilot matched to real local tasks, including sparse records, before considering expansion. No page count guarantees traffic; measure qualified actions and upkeep as well as discovery. No pages created.

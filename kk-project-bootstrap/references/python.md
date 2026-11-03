@@ -16,12 +16,13 @@ uv add --dev ruff   # or: pip install ruff
 
 ```toml
 [tool.ruff]
-target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
 ```
+
+Ruff infers its target version from `[project] requires-python`; set `target-version` only when that field is absent, and keep it consistent with the supported minimum.
 
 The contract: `ruff format` (fix) / `ruff format --check` (CI), `ruff check` (lint, `--fix` locally).
 
@@ -62,5 +63,5 @@ These hooks use the same locked tools as CI. Adapt the launcher for an existing 
 
 ## CI notes
 
-- `astral-sh/setup-uv@v3` (or `actions/setup-python@v5` with `cache: pip`).
-- Release: Python CLIs are usually published to PyPI (`uv publish` on tag) and/or as standalone binaries via PyInstaller/`uv tool install`. For a curl install script, build binaries per OS/arch in a matrix job and adapt [assets/install.sh](../assets/install.sh) — see [references/release.md](release.md).
+- `astral-sh/setup-uv@v10.2.0` (or `actions/setup-python@v7` with `cache: pip`).
+- Release: preserve the agreed trigger and channel. Python CLIs can be published to PyPI with `uv publish` from a protected job using Trusted Publishing (OIDC, with PyPI's attestations) rather than a long-lived token, and installed with `uv tool install`, or packaged as standalone binaries with tools such as PyInstaller. For a curl install script, build binaries per OS/arch in a matrix job and adapt [assets/install.sh](../assets/install.sh) — see [references/release.md](release.md).

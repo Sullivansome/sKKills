@@ -5,7 +5,7 @@ description: Package, sign, verify, and publish desktop or CLI software for macO
 
 # Signed Software Distribution
 
-Deliver installable software whose publisher and exact bytes can be verified on the user's machine. This personal collection requires **every distributed release payload to be signed**. Missing keys, unsupported verification, failed notarization, or an unsigned payload block publication; a checksum or an unsigned fallback is insufficient.
+Deliver installable software whose publisher and exact bytes can be verified on the user's machine. This personal collection requires **every directly distributed release payload to be signed** — downloads, install scripts, and packages in repositories, feeds or taps you operate. Missing keys, unsupported verification, failed notarization, or an unsigned payload block publication; a checksum or an unsigned fallback is insufficient. App stores and language registries (Mac App Store, PyPI, npm) are outside this rule: follow their required signing and provenance mechanisms.
 
 ## Define the distribution matrix
 

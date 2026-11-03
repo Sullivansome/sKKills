@@ -14,7 +14,7 @@ Use this reference for broad software delivery or lifecycle coverage audits. Ent
 | Provision runtime environments | kk-platform-infrastructure | Reviewed target/configuration, exact change effects, secrets/state handling and verified environment or explicit access gaps |
 | Implement and integrate | kk-ai-implementation | Focused change, behavior documentation, compatible contracts, integration evidence and reviewable diff |
 | Verify and review | kk-software-verification; security and AI evaluation as applicable | Acceptance-to-check trace, real results, important denial/failure paths and unresolved defects |
-| Prepare and promote a release | kk-release-delivery | Exact candidate identity, verified publisher signatures, readiness gates, migration compatibility, rollout/recovery and user-facing notes |
+| Prepare and promote a release | kk-release-delivery | Exact candidate identity, signing evidence each channel requires, readiness gates, migration compatibility, rollout/recovery and user-facing notes |
 | Package and distribute | kk-distribution | Signed native packages/final payloads, authenticated update/install path, channel-specific acceptance and actual availability |
 | Operate and support | kk-production-ops | User-facing signals, support/escalation owner, runbooks, recovery evidence, cost/capacity and incident response |
 | Learn and reprioritize | kk-product-spec; experience and ops support | Observed task outcomes/support evidence compared to expectations; next experiment, bug or improvement |
@@ -35,7 +35,7 @@ UX and architecture inform each other. Environment work can proceed alongside im
 
 For multi-phase work, update the existing issue, PR or project record with: intended outcome and acceptance examples; selected revision/artifact and affected contracts; decisions and relevant constraints; checks actually run with their results; unresolved blockers and current authorization; next action/owner and recovery or follow-up condition. Link evidence instead of copying logs or secrets. Name unavailable owners as unassigned rather than inventing them.
 
-Label target-project maturity separately from skill coverage: covered, partial, missing, not applicable with reason, or unverified. A skill file provides a procedure; it does not prove the target app has implemented it. Close the requested scope only after its acceptance evidence exists; explicitly report any remaining external blocker. Publication requires valid signatures for every intended target and verified consumer trust. Finishing code alone does not close an authorized end-to-end delivery task.
+Label target-project maturity separately from skill coverage: covered, partial, missing, not applicable with reason, or unverified. A skill file provides a procedure; it does not prove the target app has implemented it. Close the requested scope only after its acceptance evidence exists; explicitly report any remaining external blocker. Publication requires the signing and consumer verification each intended channel requires: detached publisher signatures for direct downloads and operated feeds, channel signing/provenance for stores and registries. Finishing code alone does not close an authorized end-to-end delivery task.
 
 ## Adapt to product type and scope
 

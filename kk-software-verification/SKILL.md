@@ -1,6 +1,6 @@
 ---
 name: kk-software-verification
-description: Build a risk-based test strategy, review code for correctness, or verify a substantial change before release. Use for missing test coverage, regression prevention, flaky tests, acceptance validation, or an evidence-based quality review of AI-generated code.
+description: Build a risk-based test strategy, add missing regression tests, fix flaky tests, or verify a substantial change against acceptance criteria before release. Use when the deliverable is test evidence or an evidence-based correctness report, especially when existing tests may be vacuous; a routine diff review can use the agent's built-in review.
 ---
 
 # Software Verification

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "kind": "static-html-inventory",
+  "pages": {
+    "draft.html": {
+      "sha256": "b4f7386ba980d3ff2abc76c64f1c201c826d8131c026fa08d395ac53fa37e8d6",
+      "bytes": 4905,
+      "titles": [
+        "Onboarding email templates: welcome and setup reminder | SetupLeaf"
+      ],
+      "descriptions": [
+        "Adapt two illustrative onboarding emails: a welcome message and a setup reminder, with subject lines and practical customization notes."
+      ],
+      "canonicals": [
+        "https://example.test/templates/onboarding/"
+      ],
+      "robots": [],
+      "headings": [
+        {
+          "level": "h1",
+          "text": "Help a new customer take the first step"
+        },
+        {
+          "level": "h2",
+          "text": "1. Welcome: choose one useful setup action"
+        },
+        {
+          "level": "h3",
+          "text": "Customization notes"
+        },
+        {
+          "level": "h2",
+          "text": "2. Setup reminder: make returning easy"
+        },
+        {
+          "level": "h3",
+          "text": "Customization notes"
+        },
+        {
+          "level": "h2",
+          "text": "Adapt one email and check it"
+        }
+      ],
+      "links": [
+        {
+          "href": "/templates/",
+          "text": "Email templates",
+          "rel": null,
+          "aria_label": null
+        },
+        {
+          "href": "/templates/",
+          "text": "Browse the email-template topic hub",
+          "rel": null,
+          "aria_label": null
+        }
+      ],
+      "images": [],
+      "table_rows": [],
+      "table_count": 0,
+      "json_ld": [],
+      "json_ld_errors": []
+    }
+  },
+  "limitations": "Static UTF-8 HTML only; no network, rendering, headers, indexing, truth or conversion verification."
+}

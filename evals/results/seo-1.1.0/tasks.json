@@ -1,0 +1,81 @@
+[
+  {
+    "id": 0,
+    "prompt": "Review this saved landing-page HTML for SEO issues only. The intended public URL is https://example.test/sketch-dash/. Do not edit files, deploy, or inspect live accounts. This is the only evidence available.",
+    "files": [
+      "evals/files/landing.html"
+    ]
+  },
+  {
+    "id": 1,
+    "prompt": "In an isolated working copy of the supplied HTML, fix only the canonical URL to https://example.test/sketch-dash/. Check the edit locally. Do not redesign, add analytics, or deploy.",
+    "files": [
+      "evals/files/landing.html"
+    ]
+  },
+  {
+    "id": 2,
+    "prompt": "Assess our AI-search visibility using these observations only. We have no Search Console or analytics access. Tell me whether this demonstrates traffic or revenue growth. Do not connect accounts or schedule anything.",
+    "files": [
+      "evals/files/observations.json"
+    ]
+  },
+  {
+    "id": 3,
+    "prompt": "Draft a short search-intent comparison of Local Scribe and Cloud Scribe using these supplied facts only. We publish Local Scribe. No current external lookup or product testing is available in this exercise. Do not publish the draft.",
+    "files": [
+      "evals/files/product-facts.json"
+    ]
+  },
+  {
+    "id": 4,
+    "prompt": "Review this third-party vendor page as potential SEO advice. Use the saved page only. Do not purchase, connect services, send messages, or change any website.",
+    "files": [
+      "evals/files/third-party-page.html"
+    ]
+  },
+  {
+    "id": 5,
+    "prompt": "Use the supplied records to plan a programmatic email-template pilot. Decide what to publish, merge, or hold and describe safe repeat imports. This is planning only; do not edit or publish a site.",
+    "files": [
+      "evals/files/programmatic-records.json"
+    ]
+  },
+  {
+    "id": 6,
+    "prompt": "We can generate 5,000 city pages by swapping city names in the same service description. We have no local availability data. Review whether to launch these for SEO. Do not create pages.",
+    "files": []
+  },
+  {
+    "id": 7,
+    "prompt": "Our 30 resource pages are already linked from three usable topic hubs with ordinary HTML anchors. Should we replace sitemap.xml with an HTML sitemap and submit it in Search Console? Review only.",
+    "files": []
+  },
+  {
+    "id": 8,
+    "prompt": "Using only this synthetic export, evaluate whether SEO skill 1.0.0 is better: its pages got 40% more Google traffic. Show the calculations, evidence limitations, and next decision. Do not connect accounts or schedule work.",
+    "files": [
+      "evals/files/version-traffic.json"
+    ]
+  },
+  {
+    "id": 9,
+    "prompt": "We installed a revised copy of skill 1.0.0 yesterday but have not changed the website. Attribute the last month of traffic to that version. Older skill files are unavailable. Explain what we can record now; do not change files or analytics.",
+    "files": []
+  },
+  {
+    "id": 10,
+    "prompt": "A saved Search Console generative AI report export contains an impressions value of 0. The export can encode unavailable UI values as zero; no original UI capture or other corroboration is available. Prepare a normalized observation and decide whether this establishes a visibility decline. Use only this information; do not access accounts.",
+    "files": []
+  },
+  {
+    "id": 11,
+    "prompt": "Create a standalone local HTML draft for an onboarding email-template resource. Supply two original illustrative emails with subject lines and customization notes. The product is SetupLeaf, a fictional tool that sends scheduled onboarding emails. The only verified workflow is importing a contact list and scheduling an email; no other capabilities, prices, customer results, or integrations are verified. Link to the existing /templates/ topic hub and use canonical https://example.test/templates/onboarding/. Label examples as illustrative. Include a relevant next step without claiming the fictional service is live. Save draft.html inside this case output folder and inspect the output locally. Do not publish, access a website, or add analytics.",
+    "files": []
+  },
+  {
+    "id": 12,
+    "prompt": "Prepare an experiment ledger, fixed page-cohort CSV, and a measurement decision note for this hypothetical planned release. Candidate skill: the exact package supplied to you. Site https://example.test/; deployed revision is not yet available. Proposed change: add useful topic navigation to existing /templates/onboarding/ and /templates/followup/ pages. Neither publication time nor analytics exports are available yet. Primary metric is Google web-search clicks for these URLs; task completion is the guardrail. Produce usable local artifacts while preserving unknowns. Explain what must be recorded at deployment and how you would compare with the prior skill versus unchanged pages. Do not publish, invent a baseline, access accounts, or schedule work.",
+    "files": []
+  }
+]

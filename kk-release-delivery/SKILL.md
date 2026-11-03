@@ -23,7 +23,7 @@ Confirm the artifact to deliver, checks required, environment/account, rollout o
 
 Check release notes and supported consumer compatibility. Account for store/channel delays and clients that cannot immediately downgrade. For libraries, inspect package contents, exported APIs and supported runtimes, then test a clean consumer install.
 
-For distributed packages, use `kk-distribution` when available and carry its evidence into promotion: exact final payloads, verified publisher/native signatures and required notarization, plus clean install/update results. Otherwise establish that evidence directly using the ecosystem's supported verification path. Missing credentials or failed verification block publication across the requested targets; only an explicit user scope change narrows that set. For services, use the platform's artifact-signing and verification contract.
+For directly distributed packages, use `kk-distribution` when available and carry its evidence into promotion: exact final payloads, verified publisher/native signatures and required notarization, plus clean install/update results. Missing credentials or failed verification block publication across the requested targets; only an explicit user scope change narrows that set. App stores and language registries use their own required signing and provenance (e.g. Play App Signing, PyPI attestations, npm provenance). For services, use the platform's artifact-signing and verification contract.
 
 ## Define rollout and recovery before execution
 

@@ -301,6 +301,84 @@
         "kk-security-review",
         "kk-product-spec"
       ]
+    },
+    {
+      "id": 33,
+      "prompt": "Audit the search indexability, canonical URLs, and search-intent coverage of our product landing pages. Give findings only.",
+      "expected_primary": "kk-seo-growth",
+      "not_primary": [
+        "kk-experience-design",
+        "kk-distribution"
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "Assess whether these AI-search citations and Search Console observations show qualified discovery growth. Separate citations from traffic.",
+      "expected_primary": "kk-seo-growth",
+      "not_primary": [
+        "kk-ai-evaluation",
+        "kk-production-ops"
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "Improve checkout form error recovery and mobile usability. Search discovery and content are outside this task.",
+      "expected_primary": "kk-experience-design",
+      "not_primary": [
+        "kk-seo-growth"
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "Write a short voiceover for this supplied gameplay clip. No search strategy, keyword research, or outreach is needed.",
+      "expected_primary": null,
+      "not_primary": [
+        "kk-seo-growth"
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "Package our macOS utility with signing, notarization, and a verified installer. No marketing work.",
+      "expected_primary": "kk-distribution",
+      "not_primary": [
+        "kk-seo-growth"
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "Critique the core loop, player decisions and production scope of this indie game pitch before I build it.",
+      "expected_primary": "kk-game-idea-critic",
+      "not_primary": [
+        "kk-ios-app-idea-critic",
+        "kk-product-spec"
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "Is this iPhone utility idea worth building? Assess substitutes, willingness to pay and App Review originality risks.",
+      "expected_primary": "kk-ios-app-idea-critic",
+      "not_primary": [
+        "kk-game-idea-critic",
+        "kk-product-spec"
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "Fix the collision bug in this Godot platformer. The approved game design and business model must stay unchanged.",
+      "expected_primary": "kk-ai-implementation",
+      "not_primary": [
+        "kk-game-idea-critic",
+        "kk-ios-app-idea-critic"
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "Implement the approved SwiftUI settings screen using the existing view model. No product evaluation is requested.",
+      "expected_primary": "kk-ai-implementation",
+      "not_primary": [
+        "kk-ios-app-idea-critic",
+        "kk-game-idea-critic"
+      ]
     }
   ]
 }

@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "site": "https://example.test",
+  "existing_page": {
+    "id": "followup-demo",
+    "url": "/templates/demo-follow-up/",
+    "intent": "follow up after a sales demo"
+  },
+  "candidates": [
+    {
+      "id": "onboarding",
+      "url": "/templates/onboarding/",
+      "intent": "help new customers get started",
+      "material": "Three original setup emails with subject lines and customization notes",
+      "rights": "owned",
+      "verified_at": "2026-10-10"
+    },
+    {
+      "id": "sales-recap",
+      "url": "/templates/sales-recap/",
+      "intent": "follow up after a sales demo",
+      "material": "An additional original follow-up example",
+      "rights": "owned"
+    },
+    {
+      "id": "webinar",
+      "url": "/templates/webinar/",
+      "intent": "invite people to a webinar",
+      "material": null,
+      "rights": null
+    }
+  ]
+}

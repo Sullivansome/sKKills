@@ -1,0 +1,1 @@
+experiment_id,cohort_id,arm,period,period_start,period_end,source,property,channel,search_type,country,device,query_segment,metric,metric_definition,value,unit,data_status,timezone,extracted_at,filters,raw_export_ref,notes,zero_evidence,zero_evidence_ref

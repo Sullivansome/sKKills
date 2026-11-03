@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Validate skill packaging and evaluation data; this does not run agent evals."""
 import json
+import importlib.util
+import zipfile
 import re
 import sys
 from pathlib import Path
@@ -135,6 +137,15 @@ def validate(root=ROOT):
                 raise ValueError('expected workflow triggers and jobs')
         except (yaml.YAMLError, ValueError) as exc:
             errors.append(f'{path.relative_to(root)}: {exc}')
+    release_helper = root / 'kk-seo-growth/scripts/skill_release.py'
+    if (root / 'kk-seo-growth/SKILL.md').exists():
+        try:
+            spec = importlib.util.spec_from_file_location('seo_release_validation', release_helper)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            module.verify(root / 'kk-seo-growth', root / 'releases/kk-seo-growth', allow_development=True)
+        except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile) as exc:
+            errors.append(f'SEO release verification: {exc}')
     return errors, len(skills), case_count
 
 

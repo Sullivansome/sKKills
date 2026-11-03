@@ -6,6 +6,7 @@
 # Usage: VERSION=v1.2.3 sh install.sh
 # Authenticate this script before executing it. Its key cannot establish its own trust.
 # VERSION pins a release; untrusted latest discovery does not provide freshness.
+# Latest-release discovery requires python3 for JSON parsing; explicit VERSION does not.
 set -eu
 
 REPO="OWNER/REPO"
@@ -62,8 +63,25 @@ verify_signature() {
 
 version="${VERSION:-}"
 if [ -z "$version" ]; then
+  command -v python3 >/dev/null 2>&1 \
+    || die "python3 is required for latest-release discovery; set VERSION to select an explicit release"
   fetch "https://api.github.com/repos/$REPO/releases/latest" "$tmp/release.json"
-  version="$(awk -F '"' '/"tag_name"[[:space:]]*:/ {print $4; exit}' "$tmp/release.json")"
+  version="$(python3 - "$tmp/release.json" <<'KK_RELEASE_JSON'
+import json
+import re
+import sys
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as response:
+        release = json.load(response)
+except (OSError, ValueError):
+    sys.exit(1)
+version = release.get("tag_name") if isinstance(release, dict) else None
+if not isinstance(version, str) or not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9._-]*", version):
+    sys.exit(1)
+sys.stdout.write(version)
+KK_RELEASE_JSON
+  )" || die "latest-release response must contain a valid tag_name string"
 fi
 case "$version" in ''|.*|*[!a-zA-Z0-9._-]*) die "invalid or missing release version" ;; esac
 asset="$BIN-$os-$arch.tar.gz"

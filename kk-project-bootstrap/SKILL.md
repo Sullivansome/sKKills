@@ -15,7 +15,7 @@ Scale setup to the project: a documentation-only repository need not acquire a c
 
 ## Step 1 — Detect the stack
 
-Check framework markers and dependencies before generic manifests:
+Check framework markers and dependencies before generic manifests. Apply every matching row, not just the first: a desktop wrapper (Wails, Electron, Tauri) and its frontend framework both apply, and the wrapper's reference owns release packaging. Generic rows (`package.json`, `go.mod`) supply the base toolchain that framework references build on. In a monorepo, detect per package/workspace.
 
 | Marker | Stack | Reference |
 |---|---|---|
@@ -24,8 +24,8 @@ Check framework markers and dependencies before generic manifests:
 | `next.config.*`, `next` in deps | Next.js | [references/nextjs.md](references/nextjs.md) |
 | `@tanstack/react-start` / `@tanstack/react-router` in deps | TanStack Start / Router | [references/tanstack.md](references/tanstack.md) |
 | `@tanstack/react-query` in deps | Supplemental data layer; preserve detected host framework | [references/tanstack.md](references/tanstack.md), Query-only guidance |
-| `Cargo.toml`, `src-tauri/` | Rust / Tauri | [references/rust-tauri.md](references/rust-tauri.md) |
-| `build.gradle.kts`, `settings.gradle.kts`, `gradle/` | Kotlin / Android | [references/kotlin-android.md](references/kotlin-android.md) |
+| `Cargo.toml`, `src-tauri/`, `@tauri-apps/cli` in deps | Rust / Tauri | [references/rust-tauri.md](references/rust-tauri.md) |
+| `build.gradle(.kts)`, `settings.gradle(.kts)`, `gradle/` | Kotlin / Android (Groovy or Kotlin DSL) | [references/kotlin-android.md](references/kotlin-android.md) |
 | `Package.swift`, `*.xcodeproj`, `*.xcworkspace` | Swift — iOS / macOS | [references/swift-apple.md](references/swift-apple.md) |
 | `pyproject.toml`, `requirements.txt`, `uv.lock` | Python | [references/python.md](references/python.md) |
 | `package.json` | Node / TypeScript (generic) | [references/node-ts.md](references/node-ts.md) |
@@ -44,7 +44,7 @@ Cover these responsibilities where applicable (names may vary per stack, and a c
 
 1. `format` / `format:check` — auto-fix and CI-verify variants
 2. `lint` — static analysis
-3. `typecheck` — no emit, fast
+3. `typecheck` — check the actual source projects; avoid emit where the toolchain supports it
 4. `test` — relevant automated tests, with slower integration/e2e checks separate when useful
 5. `build` — proves the thing compiles
 
@@ -78,7 +78,7 @@ For requested release automation, preserve the provider, trigger, and product's 
 
 Read [references/release.md](references/release.md) for pipeline wiring and the relevant stack recipe. Use `kk-distribution` for package formats, signing, and installation trust; use `kk-release-delivery` for candidate promotion and recovery. Consult siblings only when available and needed; otherwise establish the scoped requirements directly.
 
-Separate build and publication jobs. Every requested target must pass final-payload publisher signatures, applicable native signing/notarization, and verification before publication; missing keys or failed checks block it. Checksums and updater signatures alone are insufficient.
+Separate build and publication jobs. Every directly distributed target (downloads, install scripts, repositories/feeds you operate) must pass final-payload publisher signatures, applicable native signing/notarization, and verification before publication; missing keys or failed checks block it. Checksums and updater signatures alone are insufficient. For app stores and language registries (App Store, Play, PyPI, npm, crates.io), meet the channel's required signing and use its provenance/attestation mechanism instead of detached signatures nobody verifies.
 
 ## Step 7 — Verify, don't assume
 

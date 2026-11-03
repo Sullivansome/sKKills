@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Replace this guard with REAL checks from the matching variant below.
       # Resolve action versions to verified commit SHAs before production use.
@@ -29,8 +29,8 @@ jobs:
           exit 1
 
       # --- Node/TS variant ---
-      # - uses: pnpm/action-setup@v4
-      # - uses: actions/setup-node@v4
+      # - uses: pnpm/action-setup@v6
+      # - uses: actions/setup-node@v7
       #   with:
       #     node-version: 22
       #     cache: pnpm
@@ -51,7 +51,8 @@ jobs:
       # - run: cargo build --locked
 
       # --- Python (uv) variant ---
-      # - uses: astral-sh/setup-uv@v3
+      # setup-uv publishes no floating major tag after v7; pin an exact release/SHA.
+      # - uses: astral-sh/setup-uv@v10.2.0
       # - run: uv sync --locked
       # - run: uv run ruff format --check
       # - run: uv run ruff check

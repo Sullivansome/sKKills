@@ -1,0 +1,13 @@
+interface:
+  display_name: "SEO Growth"
+  short_description: "Evidence-led SEO, AI discovery, and conversion"
+  default_prompt: "Use $kk-seo-growth to audit this website and prioritize evidence-backed improvements."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+policy:
+  products:
+    - "chatgpt"
+    - "codex"
+    - "api"
+    - "atlas"
+  allow_implicit_invocation: true

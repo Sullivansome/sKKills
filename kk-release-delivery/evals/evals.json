@@ -22,6 +22,16 @@
         "Uses authenticated draft or selected artifacts before publication; does not mistake latest for the draft.",
         "Pushes only the intended tag when authorized and distinguishes built/published/verified."
       ]
+    },
+    {
+      "id": 2,
+      "prompt": "Prepare the 1.4.0 release of our Python library to PyPI and our Android app to Google Play. We have no detached-signature key, only the Play upload key and a PyPI project. Do not publish yet.",
+      "expected_output": "A release plan that uses each channel's own signing and provenance and keeps publication pending authorization.",
+      "files": [],
+      "expectations": [
+        "Uses PyPI Trusted Publishing/attestations and the Play upload key with Play App Signing instead of blocking either channel on a missing detached-signature key.",
+        "Still treats missing required channel signing as a blocker and does not upload, push tags, or submit to a track in this preparation-only task."
+      ]
     }
   ]
 }

@@ -1,0 +1,28 @@
+{
+  "synthetic": true,
+  "site": "https://example.test",
+  "source": "Search Console web search",
+  "country": "US",
+  "device": "all",
+  "query_segment": "non-brand",
+  "period_days": 28,
+  "data_status": "complete",
+  "treatment": {
+    "pages": 10,
+    "before_clicks": 100,
+    "after_clicks": 140,
+    "skill_version": "1.0.0",
+    "skill_sha256": null,
+    "site_revision": null
+  },
+  "control": {
+    "pages": 20,
+    "before_clicks": 200,
+    "after_clicks": 280,
+    "unchanged": true
+  },
+  "notes": [
+    "No skill snapshot or deployed revision was recorded.",
+    "No sessions, conversions, costs, pre-trend series, or randomization evidence supplied."
+  ]
+}
