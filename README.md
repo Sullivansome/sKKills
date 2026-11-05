@@ -2,7 +2,7 @@
 
 Practical agent skills for high-quality software in the AI coding era: discover → design → build → verify → deliver → operate → evolve → retire.
 
-The collection originally contained only `kk-project-bootstrap`. It now contains **17 focused skills**: one lifecycle coordinator, ten phase skills, three cross-cutting quality skills, one search-growth specialist, and two idea critics. They cover software work from discovery through support and retirement while leaving framework-specific mechanics to the project's tooling and current documentation. Coverage is guidance, not certification or proof that a project is production-ready.
+The collection originally contained only `kk-project-bootstrap`. It now contains **18 focused skills**: one lifecycle coordinator, ten phase skills, three cross-cutting quality skills, one search-growth specialist, two idea critics, and a live Blender modelling coordinator. They cover software work from discovery through support and retirement while leaving framework-specific mechanics to the project's tooling and current documentation. Coverage is guidance, not certification or proof that a project is production-ready.
 
 See the [lifecycle map](docs/software-lifecycle-map.md) for responsibilities, handoffs, and product-type differences. The router's [end-to-end execution contract](kk-software-lifecycle/references/end-to-end.md) specifies the evidence carried between phases.
 
@@ -12,6 +12,7 @@ All skill identifiers and folders use the personal **`kk-` namespace**. The orig
 
 | Skill | Use it for |
 |---|---|
+| [kk-delegate-3d-modelling](kk-delegate-3d-modelling/SKILL.md) | Delegate 3D assets to Terra workers through isolated live Blender MCP processes, with references and export review |
 | [kk-software-lifecycle](kk-software-lifecycle/SKILL.md) | Assess gaps and route broad work to the next relevant phase |
 | [kk-product-spec](kk-product-spec/SKILL.md) | User outcomes, discovery, acceptance criteria, useful delivery slices |
 | [kk-game-idea-critic](kk-game-idea-critic/SKILL.md) | Critique and compare indie game concepts, player decisions, commercial positioning, scope, and playable validation tests |
@@ -32,7 +33,7 @@ All skill identifiers and folders use the personal **`kk-` namespace**. The orig
 
 Use a focused skill for a focused task. A typo does not need a PRD; a stateful production change needs more than a green unit test. `kk-software-lifecycle` routes broad requests and works even when only part of this collection is installed.
 
-**Installing all 17 is unnecessary.** For repository setup and desktop/CLI delivery, start with `kk-project-bootstrap` and `kk-distribution`. Add product, experience or architecture guidance when those decisions are unresolved; infrastructure, security, release, operations or evolution guidance when the task needs that expertise; and `kk-ai-evaluation` only for AI product behavior. Use the game or iOS app idea critic when deciding whether a concept is worth building or improving its product promise. Framework-specific skills may already cover some of this work, and agents with built-in diff review (for example Claude Code's `/code-review` and `/security-review`) overlap `kk-software-verification` and `kk-security-review` for single-change reviews.
+**Installing all 18 is unnecessary.** For repository setup and desktop/CLI delivery, start with `kk-project-bootstrap` and `kk-distribution`. Add product, experience or architecture guidance when those decisions are unresolved; infrastructure, security, release, operations or evolution guidance when the task needs that expertise; and `kk-ai-evaluation` only for AI product behavior. Use the game or iOS app idea critic when deciding whether a concept is worth building or improving its product promise. Framework-specific skills may already cover some of this work, and agents with built-in diff review (for example Claude Code's `/code-review` and `/security-review`) overlap `kk-software-verification` and `kk-security-review` for single-change reviews.
 
 `kk-seo-growth` applies to website search discovery; its marketing-distribution reference is separate from `kk-distribution`'s package signing and installation work. Dated personal site observations are optional [project notes](docs/seo-site-context.md), kept outside the reusable skill. Its offline HTML helper requires Python 3.9+ and has bundled regression tests included in the repository test command below.
 

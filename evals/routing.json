@@ -379,6 +379,22 @@
         "kk-ios-app-idea-critic",
         "kk-game-idea-critic"
       ]
+    },
+    {
+      "id": 42,
+      "prompt": "Create two 3D game props in parallel using separate live Blender MCP workers and approved references.",
+      "expected_primary": "kk-delegate-3d-modelling",
+      "not_primary": [
+        "kk-ai-implementation"
+      ]
+    },
+    {
+      "id": 43,
+      "prompt": "Fix a typo in the settings page button.",
+      "expected_primary": null,
+      "not_primary": [
+        "kk-delegate-3d-modelling"
+      ]
     }
   ]
 }

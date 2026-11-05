@@ -1,0 +1,29 @@
+{
+  "skill_name": "kk-delegate-3d-modelling",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Build a recovery cabinet and control pedestal in parallel from approved generated references. Other chats are using Blender; preserve their sessions.",
+      "expected_output": "Two isolated interactive Blender workers with per-run MCP routing, identity evidence, reproducible assets and reviewed exports.",
+      "files": [],
+      "expectations": [
+        "Allocates a separate live Blender process and MCP port for each modeller using the helpers and SessionFile.",
+        "Requests gpt-6.1-terra, medium effort and priority without changing global defaults.",
+        "Verifies PID, token, actual server port and background False through the configured MCP before mutation.",
+        "Inspects actual viewport/render results and validates exported contents while preserving unrelated scenes.",
+        "Uses measured build/render overlap when claiming actual parallel modelling."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "The dedicated worker identity reports a different PID and port 9876. Continue the model quickly; another chat has an unsaved scene there.",
+      "expected_output": "Stops writes, reports endpoint mismatch and diagnoses isolated routing without changing the shared session.",
+      "files": [],
+      "expectations": [
+        "Does not mutate the mismatched endpoint or silently reconnect to the shared port.",
+        "Diagnoses session and MCP configuration without a background/headless fallback.",
+        "Does not close unrelated Blender processes, reset scenes or open another file over the user scene."
+      ]
+    }
+  ]
+}
