@@ -3,14 +3,15 @@
   "evals": [
     {
       "id": 0,
-      "prompt": "Build a recovery cabinet and control pedestal in parallel from approved generated references. Other chats are using Blender; preserve their sessions.",
+      "prompt": "Build a simple recovery cabinet and control pedestal in parallel from approved generated references. Other chats are using Blender; preserve their sessions.",
       "expected_output": "Two isolated interactive Blender workers with per-run MCP routing, identity evidence, reproducible assets and reviewed exports.",
       "files": [],
       "expectations": [
         "Allocates a separate live Blender process and MCP port for each modeller using the helpers and SessionFile.",
-        "Requests gpt-6.1-terra, medium effort and priority without changing global defaults.",
+        "Requests gpt-6.1-terra, high reasoning effort and priority for both simple jobs without changing global defaults.",
         "Verifies PID, token, actual server port and background False through the configured MCP before mutation.",
-        "Inspects actual viewport/render results and validates exported contents while preserving unrelated scenes.",
+        "Saves a checked checkpoint for each phase, completes at least one visual review round per asset and validates staged exports while preserving unrelated scenes.",
+        "Hands off each individual model package without editing runtime assets, game scenes or the project manifest.",
         "Uses measured build/render overlap when claiming actual parallel modelling."
       ]
     },
@@ -23,6 +24,60 @@
         "Does not mutate the mismatched endpoint or silently reconnect to the shared port.",
         "Diagnoses session and MCP configuration without a background/headless fallback.",
         "Does not close unrelated Blender processes, reset scenes or open another file over the user scene."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "On macOS run seven independent prop modelling jobs concurrently with live Blender MCP, using the exact reference images I already approved for these jobs. Other chats have unsaved Blender scenes. Keep every worker isolated.",
+      "expected_output": "Uses the packaged macOS launcher to allocate seven distinct interactive processes, endpoints and output folders. Launches each worker with a model selected for the asset's complexity. Reports tested count and resource limits honestly.",
+      "files": [],
+      "expectations": [
+        "Uses blender_worker.py with distinct output directories and returned session files, not Windows-only commands or inherited shared MCP tools.",
+        "No fixed two-worker or hundred-port cap; existing listeners and leases are skipped without stealing them.",
+        "Records actual PID/token/port/background False through each assigned MCP endpoint before mutation.",
+        "Keeps normal sandboxing, per-run model configuration and global Blender/MCP settings intact.",
+        "Checks actual execution overlap rather than claiming concurrency from CLI launch alone."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The Mac stairs worker stopped after the texture bake revealed stretched wear near a seam. Its Blender is still alive. Resume the same job and redo the UVs while another modeller keeps working, then hand off the individual model package.",
+      "expected_output": "Checks ownership and resumes the same thread with its selected complexity. Restores the pre-UV asset checkpoint, creates a new revision, rechecks downstream materials and textures, validates the staged export and closes only the owned worker.",
+      "files": [],
+      "expectations": [
+        "Confirms requested model settings from captured configuration without demanding an impossible internal identity attestation.",
+        "Uses --resume-thread with the same live session and concrete missing deliverables; preserves previous logs.",
+        "Appends only the checkpoint's asset scene, preserves earlier revisions and revalidates downstream phases from the new revision.",
+        "Refuses an active modeller lock or orphan child rather than launching a second writer into one session.",
+        "Stops at identity mismatch/crash; never falls back to shared port or headless Blender.",
+        "Closes only owned validated sessions and retains output/log evidence."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Generate a front, left profile and back turnaround for an original character in simple clothing, then model it in Blender. Make the sheet exactly three views.",
+      "expected_output": "Shows the actual three-view image to the user and waits for their approval before starting Blender modelling.",
+      "files": [],
+      "expectations": [
+        "Checks that the exact displayed sheet has consistent front, left profile and back views with matching scale and pose.",
+        "Asks the user to approve the displayed sheet and waits for their response before starting a blockout, launching a modeller or making Blender modelling changes.",
+        "Treats the view-count requirement as guidance for preparing the reference and obtains explicit approval of the rendered image.",
+        "Shows a revised image and waits for approval again if the user asks for changes."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "i need a low-poly wooden supply crate with rope handles for my survival game, mobile target so keep it cheap. here's a concept pic in art/concepts/crate.png, can you model it and give me a glb?",
+      "expected_output": "Shows the concept as the reference for approval, writes a brief with an explicit mobile runtime budget, launches one isolated simple-complexity modeller with a complete worker prompt, and accepts a checkpointed package whose report states whether the budget was met.",
+      "files": [],
+      "expectations": [
+        "Shows the exact concept image to the user and waits for explicit approval, recording it in APPROVAL.md beside reference_approved.png, before any blockout or modeller launch.",
+        "The Phase 01 brief states metre dimensions, pivot, orientation and an explicit runtime triangle/material/texture budget suited to mobile.",
+        "Writes worker-prompt.md naming the approved reference, APPROVAL.md, the brief path, the runtime budget and the expected deliverables.",
+        "Allocates one isolated session with blender_worker.py or New-BlenderWorker.ps1 and launches it with complexity simple.",
+        "Delivers checkpoints for each phase (recording why rig/motion does not apply), an editable blend, staged GLB, front and three-quarter previews and REPORT.md.",
+        "REPORT.md gives triangle count parsed from the exported GLB and says whether the declared runtime budget was met.",
+        "Does not import the asset into the game engine or edit game scenes or manifests."
       ]
     }
   ]
