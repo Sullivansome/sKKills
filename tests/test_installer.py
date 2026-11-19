@@ -164,7 +164,7 @@ else:
         # Mock downloads still use their absolute interpreter; only the installer's
         # PATH lacks Python. Provision every other installer dependency explicitly.
         for tool in ('sh', 'awk', 'tar', 'mktemp', 'cp', 'chmod', 'mv', 'openssl',
-                     'cat', 'rm', 'mkdir', 'basename', 'sha256sum', 'shasum'):
+                     'cat', 'rm', 'mkdir', 'basename', 'sha256sum', 'shasum', 'gzip'):
             source = shutil.which(tool)
             if source:
                 (self.mockbin / tool).symlink_to(source)
