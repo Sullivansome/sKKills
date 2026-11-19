@@ -16,14 +16,14 @@ The `pre-commit` framework handles both halves (see `rust-tauri.md` for the patt
 
 ## CI
 
-Two jobs (or one job with both setups): Go job with `actions/setup-go@v7` (cache on) running fmt/vet/lint/test; frontend job running the Node contract in `frontend/`. Add a `wails build` smoke step — it catches frontend/backend binding breakage.
+Two jobs (or one job with both setups): Go job with `actions/setup-go@v7` (cache on) running fmt/vet/lint/test; frontend job running the Node contract in `frontend/`. Add a `wails build` smoke step — it catches frontend/backend binding breakage. On Linux runners install `libgtk-3-dev` and `libwebkit2gtk-4.1-dev`; Ubuntu 24.04 no longer ships webkit2gtk-4.0, so Wails v2 needs `wails build -tags webkit2_41` there.
 
 ## Release: dmg / msi(-ish) / AppImage
 
 Wails has no equivalent of tauri-action — you orchestrate the matrix yourself:
 
 - **macOS**: `wails build -platform darwin/universal` produces `.app`; wrap in dmg with `create-dmg` (brew). Developer ID signing and notarization via `codesign` + `notarytool` are required for distribution; missing credentials block release.
-- **Windows**: `wails build -platform windows/amd64` → `.exe`. There's no native msi maker; ship the exe, or add NSIS (`makensis`) for an installer. Wails v3 is improving this — check the version.
-- **Linux**: `wails build -platform linux/amd64` → binary; AppImage via `linuxdeploy` + appimagetool (needs the `.desktop` file and icon; Wails generates them in `build/`).
+- **Windows**: `wails build -platform windows/amd64` → `.exe`. There's no MSI maker; ship the exe, or use `wails build -nsis` (needs `makensis` on the runner) for an NSIS installer. Wails v3 changes packaging — check the installed version.
+- **Linux**: `wails build -platform linux/amd64` → binary; AppImage via `linuxdeploy` + appimagetool (needs a `.desktop` file, which you write, and an icon such as `build/appicon.png`; Wails v2 does not generate Linux desktop entries); use the same `-tags webkit2_41` build on Ubuntu 24.04.
 
 Require Windows Authenticode/timestamps and Linux payload/package signatures as well as Apple signing. Verify all final payload signatures and signer identities before publication. Preserve the agreed trigger, source revision, version and channel as described in [release.md](release.md). For GitHub Releases, a separate gated publication job can use `softprops/action-gh-release@v3`; a tag-push trigger is optional. Use stable artifact names (`myapp-x.y.z-darwin-universal.dmg`, `...-windows-amd64.exe`, `...-linux-amd64.AppImage`) and a signed checksum manifest. The bundled [assets/install.sh](../assets/install.sh) handles CLI tarballs, not AppImage/DMG files. Implement and test a verified per-format installer if requested.

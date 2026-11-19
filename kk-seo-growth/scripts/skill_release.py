@@ -10,7 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION_RE = r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-dev\.[1-9][0-9]*)?'
-IGNORED = {'__pycache__', '.pytest_cache', '.DS_Store'}
+IGNORED = {'__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.venv', '.git', '.DS_Store'}
 
 
 def valid_path(name):
@@ -31,12 +31,18 @@ def manifest_for(payload):
             'hash_method': 'sha256 of UTF-8 JSON file-hash map, sorted keys, compact separators', 'files': hashes}
 
 
-def collect(root):
+def collect(root, strict=True):
+    """Fingerprint the declared package files.
+
+    strict=True (packaging and verification) rejects undeclared files. strict=False
+    (identity of an installed copy) fingerprints only declared files and reports
+    extras in the manifest's 'warnings', because installers may add metadata.
+    """
     root = Path(root).resolve()
     listing = root / 'PACKAGE_FILES.json'
     if listing.is_symlink():
         raise ValueError('Package listing must not be a symlink')
-    declared = json.loads(listing.read_text())
+    declared = json.loads(listing.read_text(encoding='utf-8'))
     if not isinstance(declared, list) or any(not isinstance(n, str) or not valid_path(n) for n in declared):
         raise ValueError('PACKAGE_FILES.json must list safe relative file paths')
     if len(set(declared)) != len(declared) or not {'VERSION', 'SKILL.md', 'PACKAGE_FILES.json'} <= set(declared):
@@ -50,10 +56,14 @@ def collect(root):
             raise ValueError(f'Internal symlinks are not supported: {relative}')
         if path.is_file():
             actual.add(relative.as_posix())
-    if actual != set(declared):
-        raise ValueError(f'Package contents differ: unexpected={sorted(actual-set(declared))}, missing={sorted(set(declared)-actual)}')
+    unexpected, missing = sorted(actual - set(declared)), sorted(set(declared) - actual)
+    if missing or (strict and unexpected):
+        raise ValueError(f'Package contents differ: unexpected={unexpected}, missing={missing}')
     payload = {name: (root / name).read_bytes() for name in sorted(declared)}
-    return manifest_for(payload), payload
+    manifest = manifest_for(payload)
+    if unexpected:
+        manifest['warnings'] = [f'Undeclared files not fingerprinted: {unexpected}']
+    return manifest, payload
 
 
 def archive_bytes(manifest, payload):
@@ -81,7 +91,7 @@ def verify_registry(registry):
     for version in sorted(manifests):
         if not re.fullmatch(VERSION_RE, version) or '-dev.' in version:
             raise ValueError(f'Invalid release name: {version}')
-        saved = json.loads((registry / (version + '.json')).read_text())
+        saved = json.loads((registry / (version + '.json')).read_text(encoding='utf-8'))
         with zipfile.ZipFile(registry / (version + '.zip')) as archive:
             names = archive.namelist()
             if len(names) != len(set(names)):
@@ -172,9 +182,13 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'identity':
-            manifest, _ = collect(ROOT)
+            manifest, _ = collect(ROOT, strict=False)
+            warnings = manifest.pop('warnings', [])
+            # An installed copy usually has no release registry beside it; report it as unregistered.
             records = verify_registry(args.registry) if args.registry.exists() else {}
             result = {'release_status': status(manifest, records), **manifest}
+            if warnings:
+                result['warnings'] = warnings
         elif args.command == 'verify':
             result = verify(ROOT, args.registry, args.allow_development)
         elif args.command == 'publish':

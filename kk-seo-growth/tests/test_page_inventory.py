@@ -66,6 +66,28 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(result["json_ld_errors"], [])
         self.assertEqual(len(parse('<script type="application/ld+json">{broken}</script>')["json_ld_errors"]), 1)
 
+    def test_svg_title_is_not_a_document_title(self):
+        result = parse('<title>Page</title><svg><title>Logo</title><path/></svg><h1>Hi</h1>')
+        self.assertEqual(result["titles"], ["Page"])
+        self.assertEqual(result["headings"], [{"level": "h1", "text": "Hi"}])
+
+    def test_json_ld_cdata_and_comment_wrappers_are_stripped(self):
+        for body in ('//<![CDATA[\n{"a":1}\n//]]>', '<!--{"a":1}-->', '/*<![CDATA[*/{"a":1}/*]]>*/', ' <!-- <![CDATA[ {"a":1} ]]> --> '):
+            with self.subTest(body=body):
+                result = parse('<script type="application/ld+json">' + body + '</script>')
+                self.assertEqual((result["json_ld"], result["json_ld_errors"]), ([{"a": 1}], []))
+
+    def test_lang_and_hreflang_alternates_are_captured(self):
+        result = parse('<html lang="en-GB"><head><link rel="alternate" hreflang="fr" href="/fr/">'
+                       '<link rel="alternate" type="application/rss+xml" href="/feed">'
+                       '<link rel="alternate" hreflang="x-default" href="/"></head></html>')
+        self.assertEqual(result["lang"], ["en-GB"])
+        self.assertEqual(result["hreflang"], [{"hreflang": "fr", "href": "/fr/"}, {"hreflang": "x-default", "href": "/"}])
+
+    def test_new_anchor_closes_unclosed_anchor(self):
+        result = parse('<a href="/a">One<a href="/b">Two</a> tail')
+        self.assertEqual([(l["href"], l["text"]) for l in result["links"]], [("/a", "One"), ("/b", "Two")])
+
 
 class SnapshotTests(unittest.TestCase):
     def setUp(self):
@@ -109,6 +131,26 @@ class SnapshotTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(SCRIPT), "inventory", str(self.root / "missing")], capture_output=True, text=True)
         self.assertEqual(result.returncode, 2)
         self.assertIn("Input does not exist", result.stderr)
+
+    def test_declared_charset_is_honoured_and_invalid_bytes_warn(self):
+        folder = self.root / "legacy"
+        folder.mkdir()
+        (folder / "latin.html").write_bytes('<meta charset="iso-8859-1"><title>Café</title>'.encode("latin-1"))
+        (folder / "broken.html").write_bytes(b"<title>Caf\xe9</title>")
+        pages = inventory.inventory(folder, 100_000)["pages"]
+        self.assertEqual((pages["latin.html"]["titles"], pages["latin.html"]["encoding"], pages["latin.html"]["decode_warnings"]),
+                         (["Café"], "cp1252", []))
+        self.assertEqual(pages["broken.html"]["encoding"], "utf-8")
+        self.assertIn("not valid utf-8", pages["broken.html"]["decode_warnings"][0])
+
+    def test_older_snapshot_schema_requires_regeneration(self):
+        before = self.snapshot("before", "<title>A</title>")
+        data = json.loads(before.read_text(encoding="utf-8"))
+        data["schema_version"] = 1
+        before.write_text(json.dumps(data), encoding="utf-8")
+        after = self.snapshot("after", "<title>B</title>")
+        with self.assertRaisesRegex(ValueError, "regenerate both snapshots"):
+            inventory.compare(before, after)
 
 
 if __name__ == "__main__":

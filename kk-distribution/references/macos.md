@@ -13,6 +13,8 @@ Typical verification building blocks, adapted to the actual product:
 ```sh
 codesign --verify --deep --strict --verbose=2 MyApp.app
 spctl --assess --type execute --verbose=4 MyApp.app
+spctl --assess --type open --context context:primary-signature --verbose=4 MyApp.dmg
+spctl --assess --type install --verbose=4 MyApp.pkg
 pkgutil --check-signature MyApp.pkg
 xcrun stapler validate MyApp.dmg
 ```
@@ -23,7 +25,7 @@ Use only applicable commands and supplement them with identity and notarization-
 
 For direct downloads, finish native signing/stapling before generating final hashes, detached signatures, and the signed release manifest. Publish each selected architecture or a tested universal build. Verify quarantine/Gatekeeper behavior, installer permissions, first launch, supported upgrades, and removal.
 
-If Homebrew is requested, choose a cask for a suitable application/installer or a formula for a CLI. Keep URL, version and digest tied to the final signed payload; test via a maintained tap and the current Homebrew guidance. Do not add quarantine-removal or signature-bypass instructions. Homebrew checksum matching alone does not verify a detached publisher signature; test the actual native/trusted verification path and report any gap before calling the channel compliant.
+If Homebrew is requested, choose a cask for a suitable application/installer or a formula for a CLI. Keep URL, version and digest tied to the final signed payload; test via a maintained tap and the current Homebrew guidance. Do not add quarantine-removal or signature-bypass instructions. Homebrew checksum matching alone does not verify a detached publisher signature. For homebrew-core/homebrew-cask, follow their submission rules; for a tap you operate, the client-side check is Gatekeeper's native verification of the installed Developer ID/notarized payload. A formula installing an unsigned or non-notarized binary has no such check: report that gap before calling the channel compliant.
 
 For Sparkle, Tauri, or another updater, use that updater's required signing keys and client verification in addition to OS signing. Include update metadata and helper code in the inventory. Stage rollout only after a valid signed upgrade and rejection of tampered updates have been exercised.
 

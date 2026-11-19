@@ -1,0 +1,7 @@
+# SEO release fingerprints hash exact file bytes; never convert line endings there.
+kk-seo-growth/** -text
+releases/** binary
+# Recorded eval artifacts are kept byte-for-byte (some CSVs are CRLF by design).
+evals/results/** -text
+# Shell scripts must stay LF to run.
+*.sh text eol=lf

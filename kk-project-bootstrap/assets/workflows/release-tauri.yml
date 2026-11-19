@@ -29,6 +29,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       # Remove only after implementing the actual application-specific signing gates.
       - name: Require configured signing and verification
@@ -51,8 +53,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      # rustup reads the exact tested version from rust-toolchain.toml.
-      - run: rustup show active-toolchain
+      # Installs the exact tested version from rust-toolchain.toml before adding targets.
+      - run: rustup toolchain install
       - run: rustup target add ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
 

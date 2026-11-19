@@ -18,7 +18,7 @@ Offer a real test, original data, example, or sufficient product access for an h
 
 ## Outreach
 
-Draft concise individualized messages with one clear offer and room for refusal. Use recipient-resolution capabilities when applicable.
+Draft concise individualized messages with one clear offer and room for refusal. Address each to a verified contact, not a guessed one.
 
 Sending requires explicit user authorization. Importing into an active campaign, activating sequences, replying, and initial sending are external actions. A draft-only task never authorizes them. Reuse existing explicit authorization without repeatedly asking.
 

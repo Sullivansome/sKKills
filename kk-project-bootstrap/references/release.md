@@ -1,6 +1,6 @@
 # Initial release automation
 
-Use this reference to wire an agreed artifact/distribution contract into the project's build system. `kk-distribution` owns package formats, signing and consumer trust; `kk-release-delivery` owns candidate promotion and recovery. Use them when available and needed, or establish those requirements directly. Pipeline setup alone does not authorize publication.
+Use this reference to wire an agreed artifact/distribution contract into the project's build system. `kk-distribution` owns package formats, signing and consumer trust. Use it when available, or establish those requirements directly. Pipeline setup alone does not authorize publication.
 
 ## Preserve the trigger and version contract
 

@@ -62,13 +62,17 @@ pnpm exec lint-staged
 ```json
 {
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css,md}": ["biome format --write --no-errors-on-unmatched"],
+    "*.{ts,tsx,js,jsx,json,css}": ["biome format --write --no-errors-on-unmatched"],
     "*.{ts,tsx,js,jsx}": ["biome lint --no-errors-on-unmatched"]
   }
 }
 ```
 
-If typecheck is fast enough (<5s on this repo), add a second hook `.husky/pre-push` running `pnpm typecheck` — it's whole-project so it can't be lint-staged, and pre-push keeps commits snappy.
+Biome does not format Markdown; leave `.md` to Prettier or out of the hook.
+
+`--write` is acceptable here because lint-staged stashes unstaged hunks and re-stages only the fixed staged content, so partial staging survives. Hooks without that mechanism (plain git hooks, the `pre-commit` framework in other references) stay check-only.
+
+Typecheck is whole-project, so it can't run through lint-staged. Always run it in CI. Measure it: if it is too slow for every commit but tolerable before sharing work, add `.husky/pre-push` running `pnpm typecheck`.
 
 ## CI notes
 

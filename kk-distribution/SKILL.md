@@ -1,11 +1,11 @@
 ---
 name: kk-distribution
-description: Package, sign, verify, and publish desktop or CLI software for macOS, Windows including Chocolatey, and Linux package repositories or direct downloads. Use for distribution channels, code signing, notarization, installer/update trust, and package publication; use kk-release-delivery for service rollout or production recovery.
+description: Package, sign, verify, and publish desktop or CLI software for macOS, Windows including Chocolatey, and Linux package repositories or direct downloads. Use for distribution channels, code signing, notarization, installer/update trust, and package publication. Not for server/service deployment or production rollout.
 ---
 
 # Signed Software Distribution
 
-Deliver installable software whose publisher and exact bytes can be verified on the user's machine. This personal collection requires **every directly distributed release payload to be signed** — downloads, install scripts, and packages in repositories, feeds or taps you operate. Missing keys, unsupported verification, failed notarization, or an unsigned payload block publication; a checksum or an unsigned fallback is insufficient. App stores and language registries (Mac App Store, PyPI, npm) are outside this rule: follow their required signing and provenance mechanisms.
+Deliver installable software whose publisher and exact bytes can be verified on the user's machine. This personal collection requires **every directly distributed release payload to be signed** — downloads, install scripts, and packages in repositories, feeds or taps you operate. Missing keys, unsupported verification, failed notarization, or an unsigned payload block publication; a checksum or an unsigned fallback is insufficient. App stores, language registries (Mac App Store, PyPI, npm) and moderated third-party package repositories you do not operate (the Chocolatey community repository, homebrew-core/homebrew-cask) are outside the detached-signature rule: follow their required signing and provenance mechanisms, and still ship the software they install with its native OS signatures (Authenticode, Developer ID plus notarization). Private Chocolatey feeds, your own Homebrew tap, and APT/RPM repositories are channels you operate and fall under the full rule.
 
 ## Define the distribution matrix
 
@@ -21,7 +21,7 @@ For final payload signatures and the bootstrap installer's exact verification co
 | Windows | Authenticode executable/installer/script signatures and timestamps; Chocolatey package and feed verification | [references/windows-chocolatey.md](references/windows-chocolatey.md) |
 | Linux | Signed APT metadata, signed RPM packages/repository metadata, authenticated direct archives/AppImages | [references/linux.md](references/linux.md) |
 
-`kk-project-bootstrap` can set up build machinery; this skill owns distribution formats, signing, package channels, and install/update trust. `kk-release-delivery` owns broader promotion/recovery coordination. Use siblings only if available; their absence does not permit skipping signing.
+`kk-project-bootstrap` can set up build machinery; this skill owns distribution formats, signing, package channels, and install/update trust. Use it only if available; its absence does not permit skipping signing.
 
 ## Establish trusted identities before release
 

@@ -1,20 +1,33 @@
 # Evaluation record
 
-Initial evaluation: 2026-09-10. Updated: 2026-10-13. These results distinguish package correctness, executable installer behavior, description selection, and limited behavioral skill samples. They are not a benchmark of general agent effectiveness. Skill links use the current `kk-` names; the initial runs preceded the namespace change.
+Initial evaluation: 2026-09-10. Updated: 2026-11-19. These results distinguish package correctness, executable installer behavior, description selection, and limited behavioral skill samples. They are not a benchmark of general agent effectiveness. Skill links use the current `kk-` names; the initial runs preceded the namespace change.
 
-## Authored cases
+## Lifecycle skills removed — 2026-11-19
+
+Removed twelve skills: `kk-software-lifecycle`, `kk-product-spec`, `kk-experience-design`, `kk-architecture-design`, `kk-platform-infrastructure`, `kk-ai-implementation`, `kk-software-verification`, `kk-security-review`, `kk-release-delivery`, `kk-production-ops`, `kk-software-evolution`, and `kk-ai-evaluation`. A review found that they mostly restated practice a capable coding agent already follows, carried no scripts or templates, and had never been run against a no-skill baseline except the single migration/release sample below, where the baseline also met all eight criteria. The two idea critics, `kk-game-idea-critic` and `kk-ios-app-idea-critic`, were also removed at the owner's request. `kk-project-bootstrap` and `kk-distribution` were kept because they carry personal signing policy, stack-specific references, and templates. Their cross-references to `kk-release-delivery` were removed. Routing cases whose expected lead was a removed skill now expect no lead skill. The lifecycle map and coverage audit were deleted; sections below describe the collection as it was when each check ran and remain in git history.
+
+## Remaining-skill fixes — 2026-11-19
+
+Applied the review findings to the three remaining unverified skills. No agent behavioral runs were made for these changes; only the deterministic checks below.
+
+- `kk-project-bootstrap`: release cases 0, 2, 3, 4 and 5 now require native plus detached signatures and blocked publication instead of rewarding checksum-only releases. Cases 1 and 6 gained raw fixtures (`node-cli`, and `swift-partial` with a script that recreates partial staging in a copy). The installer runs its JSON parser with `python3 -I` and rejects Ed25519/Ed448 publisher keys up front. Templates use `rustup toolchain install`, `persist-credentials: false`, and cancel only superseded PR runs. Wails, Next.js, Electron and Node references were corrected; the hook rule now states that only lint-staged-style re-staging may auto-fix.
+- `kk-distribution`: the Chocolatey community repository and homebrew-core/cask are classified with registries (native signatures on installed software, no unverifiable wrapper signature); private feeds and own taps keep the full detached-signature rule. Added DMG and PKG `spctl` checks.
+- `kk-seo-growth` (1.2.0-dev.1): removed environment-specific instructions; the user-facing identity step works on installed copies; maintainer release steps moved to [SEO releases](seo-release.md); fixed multi-cohort traffic validation and several page-inventory parser gaps, with regression tests.
+- Added `.gitattributes` so line-ending conversion cannot change SEO fingerprints or shell scripts.
+
+## Authored cases (historical)
 
 The initial collection had 27 prompts. It now has **57 behavioral cases**: eleven SEO-growth cases, twelve bootstrap cases, four distribution cases, three lifecycle cases, three release-delivery cases, and two per remaining skill. Every case has nonempty grading expectations. Four added bootstrap cases include raw fixtures for React Router/legacy React Query, Query-only usage in Next.js, scoped TanStack Router, and a generic Go CLI. The full suite has **not** been executed. The separate routing set now has 42 lead-skill selection cases; actual runtime automatic-selection precision/recall has not been measured.
 
 ## Idea critic imports — 2026-10-13
 
-Imported the supplied `game-idea-critic.zip` and `ios-app-idea-critic.zip` as [kk-game-idea-critic](../kk-game-idea-critic/SKILL.md) and [kk-ios-app-idea-critic](../kk-ios-app-idea-critic/SKILL.md). Preserved all eight supplied files, changing only the skill names and the iOS skill's reference to the game skill. Added two behavioral cases per skill and four routing cases covering concept critique versus ordinary implementation. The collection now contains 17 skills.
+Imported the supplied `game-idea-critic.zip` and `ios-app-idea-critic.zip` as `kk-game-idea-critic` and `kk-ios-app-idea-critic` (removed 2026-11-19). Preserved all eight supplied files, changing only the skill names and the iOS skill's reference to the game skill. Added two behavioral cases per skill and four routing cases covering concept critique versus ordinary implementation. The collection now contains 17 skills.
 
 Repository structural validation, both official metadata checks, all nine validator regression tests, archive-content comparison with the namespace substitutions, and diff whitespace checks passed. The new behavioral and routing cases have not received model runs. No global installation, commit, push, or publication was performed.
 
 ## Initial migration/release behavioral sample
 
-Two independent subagents received the same synthetic [orders migration/release scenario](../kk-release-delivery/evals/files/orders-transition.md), with four rolling instances, old clients supported for 90 days, money-unit conversion, shared retrying jobs, untested nightly backups, and limited staging metrics. One read `kk-software-evolution`, its migration reference, and `kk-release-delivery`. The baseline was instructed not to read those skills or this repository. No production execution or customer communication was authorized or performed.
+Two independent subagents received the same synthetic orders migration/release scenario (formerly `kk-release-delivery/evals/files/orders-transition.md`, removed 2026-11-19), with four rolling instances, old clients supported for 90 days, money-unit conversion, shared retrying jobs, untested nightly backups, and limited staging metrics. One read `kk-software-evolution`, its migration reference, and `kk-release-delivery`. The baseline was instructed not to read those skills or this repository. No production execution or customer communication was authorized or performed.
 
 Both responses were reviewed for:
 
@@ -142,3 +155,11 @@ One additional authored exported-zero scenario brings the collection to 53 behav
 These were single sessions per package, with fixed task order and no repeated trials. Exact runtime model identifier/settings were not exposed; both used the inherited configuration without overrides. Grading was by the parent agent against a separately retained rubric. The evaluation establishes bounded artifact/decision evidence, not browser-rendered usability, automatic routing accuracy, hosted CI, or live traffic improvement.
 
 Final local verification: all **69 repository tests passed**. Repository structural validation, official skill metadata validation, release-registry verification through the installed skill path, and diff whitespace checks passed. The installed 1.1.0 package fingerprint matches the exact candidate used in the paired evaluation: `5b9cafe1c6219fb84b4d2f8ea6fdb6d5c70bce183be7059f5cd331b848976699`.
+
+## macOS live Blender modelling workers, 2026-11-06
+
+Added the packaged macOS allocate/run/resume/stop launcher to `kk-delegate-3d-modelling`, with per-run Terra/medium/priority requests, isolated interactive Blender processes and endpoints, output-scope leases, inherited modeller locking and ownership-checked cleanup. Removed the old default 100-port pool and 200-port argument ceiling; candidates now cover the non-privileged port range cyclically, excluding the shared endpoint. N independent jobs have no fixed application count cap, with finite machine/port/provider resources remaining practical constraints.
+
+All **18 launcher unit tests** and **69 existing repository tests** passed locally, along with skill metadata/resource/routing validation. The socket probes in the unit tests were simulated under the restricted shell. A separate real macOS test allocated **three GUI Blender processes** after skipping **110 occupied lease fixtures and a real occupied TCP listener**, launched three separately routed Terra modellers, and measured **16.206897 seconds of three-way build overlap** and **15.602432 seconds of three-way render overlap**. All completed on their first run. The raw identity, export and event logs from that run were not retained.
+
+The live test also rejected equal/nested output scopes, an exhausted explicit port pool and cleanup while a modeller held the session. It validated replayed cart/stairs/gantry/lift exports, baseline preservation, unchanged runtime/config hashes and closure of only the owned workers. Full sources, references, previews, blends, logs and reports are retained locally in `electric-chaos/art/source/skill-macos-n-workers-2026-11-06`. This is bounded three-worker launcher/replay evidence, not unlimited hardware capacity, a fresh art-quality comparison, Godot/gameplay validation or a hosted CI result. Windows runtime behavior and live resume were not exercised in this Mac run; resume/ownership construction has unit coverage.

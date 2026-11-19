@@ -2,16 +2,59 @@
 """Offline static HTML inventory and semantic comparison; performs no network I/O."""
 
 import argparse
+import codecs
 from collections import Counter
 import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
+import re
 import sys
+
+SCHEMA_VERSION = 2
+DECLARED_CHARSET = re.compile(rb"<meta[^>]*?charset\s*=\s*[\"']?\s*([A-Za-z0-9_.:-]+)", re.I)
+# WHATWG Encoding: these labels decode as windows-1252 in browsers.
+WINDOWS_1252_LABELS = {"ascii", "us-ascii", "iso-8859-1", "iso8859-1", "latin1", "latin-1", "l1"}
+JSON_LD_OPEN = re.compile(r"\A\s*(?://|/\*)?\s*(?:<!\[CDATA\[|<!--)\s*(?:\*/)?")
+JSON_LD_CLOSE = re.compile(r"(?://|/\*)?\s*(?:\]\]>|-->)\s*(?:\*/)?\s*\Z")
 
 
 def clean(value):
     return " ".join(value.split())
+
+
+def decode_html(raw):
+    """Decode like a browser would for static files: BOM, then declared charset, then UTF-8."""
+    warnings = []
+    for bom, name in ((codecs.BOM_UTF8, "utf-8-sig"), (codecs.BOM_UTF16_LE, "utf-16"), (codecs.BOM_UTF16_BE, "utf-16")):
+        if raw.startswith(bom):
+            encoding = name
+            break
+    else:
+        match = DECLARED_CHARSET.search(raw[:4096])
+        encoding = match.group(1).decode("ascii").lower() if match else "utf-8"
+        if encoding in WINDOWS_1252_LABELS:
+            encoding = "cp1252"
+        try:
+            codecs.lookup(encoding)
+        except LookupError:
+            warnings.append(f"Unknown declared charset {encoding!r}; decoded as UTF-8")
+            encoding = "utf-8"
+    try:
+        text = raw.decode(encoding)
+    except UnicodeDecodeError as error:
+        warnings.append(f"Bytes are not valid {encoding} (first at offset {error.start}); undecodable bytes replaced")
+        text = raw.decode(encoding, errors="replace")
+    return text, encoding, warnings
+
+
+def json_ld_text(raw):
+    """Strip CDATA/comment wrappers that CMSs put around JSON-LD script bodies."""
+    text, previous = raw, None
+    while text != previous:
+        previous = text
+        text = JSON_LD_CLOSE.sub("", JSON_LD_OPEN.sub("", text, count=1), count=1)
+    return text
 
 
 class InventoryParser(HTMLParser):
@@ -30,10 +73,12 @@ class InventoryParser(HTMLParser):
             "titles": [], "descriptions": [], "canonicals": [], "robots": [],
             "headings": [], "links": [], "images": [], "table_rows": [],
             "table_count": 0, "json_ld": [], "json_ld_errors": [],
+            "lang": [], "hreflang": [],
         }
         self.captures = []
         self.tables = []
         self.suppressed = 0
+        self.svg_depth = 0
 
     def finish_current_row(self):
         """Apply optional row endings within the current table only."""
@@ -55,6 +100,16 @@ class InventoryParser(HTMLParser):
             self.finish_current_row()
         self.text_boundary(tag)
         attrs = dict(attrs)
+        if tag == "svg":
+            self.svg_depth += 1
+        elif tag == "a":
+            # Anchors cannot nest; a new <a> ends any open one, as browsers do.
+            for index in range(len(self.captures) - 1, -1, -1):
+                if self.captures[index]["tag"] == "a":
+                    self.finish(self.captures.pop(index))
+                    break
+        if tag == "html" and attrs.get("lang") is not None:
+            self.data["lang"].append(attrs["lang"])
         if tag == "meta":
             name = (attrs.get("name") or "").lower()
             if name == "description":
@@ -63,6 +118,9 @@ class InventoryParser(HTMLParser):
                 self.data["robots"].append({"name": name, "content": attrs.get("content", "")})
         elif tag == "link" and "canonical" in (attrs.get("rel") or "").lower().split():
             self.data["canonicals"].append(attrs.get("href", ""))
+        elif (tag == "link" and "alternate" in (attrs.get("rel") or "").lower().split()
+              and attrs.get("hreflang")):
+            self.data["hreflang"].append({"hreflang": attrs["hreflang"], "href": attrs.get("href", "")})
         elif tag == "img":
             self.data["images"].append({
                 key: attrs.get(key) for key in ("src", "srcset", "alt", "width", "height")
@@ -74,7 +132,9 @@ class InventoryParser(HTMLParser):
         is_ld = tag == "script" and (attrs.get("type") or "").lower().strip() == "application/ld+json"
         if tag in ("script", "style") and not is_ld:
             self.suppressed += 1
-        if tag in ("title", "h1", "h2", "h3", "h4", "h5", "h6", "a", "tr") or is_ld:
+        # An SVG <title> is an image tooltip, not the document title.
+        captured = ("h1", "h2", "h3", "h4", "h5", "h6", "a", "tr") + (() if self.svg_depth else ("title",))
+        if tag in captured or is_ld:
             self.captures.append({
                 "tag": tag, "attrs": attrs, "parts": [],
                 "table": self.tables[-1] if self.tables else None,
@@ -105,6 +165,8 @@ class InventoryParser(HTMLParser):
             self.suppressed -= 1
         if tag == "table" and self.tables:
             self.tables.pop()
+        if tag == "svg" and self.svg_depth:
+            self.svg_depth -= 1
 
     def finish(self, capture):
         tag, attrs = capture["tag"], capture["attrs"]
@@ -121,7 +183,7 @@ class InventoryParser(HTMLParser):
         elif tag == "tr":
             self.data["table_rows"].append({"table": capture["table"], "text": text})
         elif tag == "script":
-            raw = "".join(capture["parts"])
+            raw = json_ld_text("".join(capture["parts"]))
             try:
                 self.data["json_ld"].append(json.loads(raw))
             except (ValueError, TypeError) as error:
@@ -155,15 +217,16 @@ def inventory(path, max_bytes):
         if file.stat().st_size > max_bytes:
             raise ValueError(f"HTML exceeds --max-bytes: {file}")
         raw = file.read_bytes()
+        text, encoding, warnings = decode_html(raw)
         parser = InventoryParser()
-        parser.feed(raw.decode("utf-8", errors="replace"))
+        parser.feed(text)
         parser.close()
         pages[file.relative_to(parent).as_posix()] = {
             "sha256": hashlib.sha256(raw).hexdigest(),
-            "bytes": len(raw), **parser.data,
+            "bytes": len(raw), "encoding": encoding, "decode_warnings": warnings, **parser.data,
         }
-    return {"schema_version": 1, "kind": "static-html-inventory", "pages": pages,
-            "limitations": "Static UTF-8 HTML only; no network, rendering, headers, indexing, truth or conversion verification."}
+    return {"schema_version": SCHEMA_VERSION, "kind": "static-html-inventory", "pages": pages,
+            "limitations": "Static HTML files only (BOM or declared charset, else UTF-8); no HTTP Content-Type, network, rendering, indexing, truth or conversion verification."}
 
 
 def removed_values(old, new):
@@ -174,8 +237,10 @@ def removed_values(old, new):
 
 def read_snapshot(path):
     data = json.loads(Path(path).read_text(encoding="utf-8"))
-    if data.get("schema_version") != 1 or data.get("kind") != "static-html-inventory" or not isinstance(data.get("pages"), dict):
+    if data.get("kind") != "static-html-inventory" or not isinstance(data.get("pages"), dict):
         raise ValueError(f"Not a supported inventory: {path}")
+    if data.get("schema_version") != SCHEMA_VERSION:
+        raise ValueError(f"Inventory schema {data.get('schema_version')} != {SCHEMA_VERSION}: regenerate both snapshots with this helper version: {path}")
     return data["pages"]
 
 
@@ -187,8 +252,9 @@ def compare(before, after):
         if a["sha256"] == b["sha256"]:
             continue
         change = {"page": page, "metadata_changes": {}, "removed_elements": {},
-                  "json_ld_errors_after": b["json_ld_errors"]}
-        for key in ("titles", "descriptions", "canonicals", "robots"):
+                  "json_ld_errors_after": b["json_ld_errors"],
+                  "decode_warnings_after": b["decode_warnings"]}
+        for key in ("titles", "descriptions", "canonicals", "robots", "lang", "hreflang"):
             if a[key] != b[key]:
                 change["metadata_changes"][key] = {"before": a[key], "after": b[key]}
         for key in ("headings", "links", "images", "table_rows", "json_ld"):

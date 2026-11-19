@@ -111,5 +111,35 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(release.collect(SCRIPT.parents[1])[0], identity)
 
 
+    def test_installed_copy_identity_tolerates_undeclared_files(self):
+        original, _ = release.collect(self.root)
+        (self.root / '.skill-installer.json').write_text('{}')
+        (self.root / '.ruff_cache').mkdir()
+        (self.root / '.ruff_cache' / 'x').write_text('cache')
+        manifest, _ = release.collect(self.root, strict=False)
+        self.assertEqual(['Undeclared files not fingerprinted: [\'.skill-installer.json\']'], manifest.pop('warnings'))
+        self.assertEqual(original, manifest)
+        with self.assertRaisesRegex(ValueError, 'unexpected'):
+            release.collect(self.root)
+        (self.root / 'SKILL.md').unlink()
+        with self.assertRaisesRegex(ValueError, 'missing'):
+            release.collect(self.root, strict=False)
+
+    def test_identity_cli_without_registry_reports_unregistered(self):
+        installed = self.base / 'installed/kk-seo-growth'
+        (installed / 'scripts').mkdir(parents=True)
+        (installed / 'scripts/skill_release.py').write_bytes(SCRIPT.read_bytes())
+        for name in ('VERSION', 'SKILL.md'):
+            (installed / name).write_bytes((self.root / name).read_bytes())
+        (installed / 'VERSION').write_text('1.1.0\n')
+        (installed / 'PACKAGE_FILES.json').write_text(json.dumps(['VERSION', 'SKILL.md', 'PACKAGE_FILES.json', 'scripts/skill_release.py']))
+        (installed / 'extra.txt').write_text('installer metadata')
+        out = subprocess.run([sys.executable, '-I', str(installed / 'scripts/skill_release.py'), 'identity'],
+                             capture_output=True, text=True, check=True)
+        result = json.loads(out.stdout)
+        self.assertEqual('unregistered', result['release_status'])
+        self.assertRegex(result['skill_sha256'], '^[0-9a-f]{64}$')
+        self.assertIn('extra.txt', result['warnings'][0])
+
 if __name__ == '__main__':
     unittest.main()

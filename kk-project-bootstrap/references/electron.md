@@ -39,7 +39,7 @@ Release workflow: the authorized trigger selects a version/commit, then matrix j
 Gotchas:
 - Windows target: electron-updater auto-updates only the NSIS target. Use `msi` only when the product needs MSI deployment (e.g. enterprise/GPO) and does not rely on electron-updater; otherwise keep `nsis`.
 - macOS distribution requires configured Developer ID signing and notarization; Windows requires the chosen Authenticode signing provider and timestamps. Enforce identity/verification checks. Missing access blocks publication; report the required setup rather than publishing unsigned artifacts.
-- Linux AppImage build needs `sudo apt-get install -y fuse libfuse2` on newer runners.
+- Building an AppImage needs no FUSE; running or smoke-testing it on the runner needs `libfuse2` (`libfuse2t64` on Ubuntu 24.04).
 - Keep `version` in package.json consistent with the selected release version; compare it to the tag only for tag-triggered releases. electron-builder uses package.json's version for asset names.
 - electron-forge instead? Use its makers (`@electron-forge/maker-dmg` etc.) + `electron-forge publish`; same matrix idea.
 

@@ -25,7 +25,7 @@ These were reviewed as starting points on 2026-10-03. Reopen relevant current so
 - [Crawler documentation](https://developers.openai.com/api/docs/bots): search, training, and user-triggered fetching are distinct.
 - [Web search API guide](https://developers.openai.com/api/docs/guides/tools-web-search): search behavior, citations versus consulted sources, API controls. Do not infer identical consumer-UI behavior.
 
-Follow the applicable OpenAI documentation workflow for current OpenAI questions. Do not infer proprietary ranking rules or undocumented training timelines.
+Check these pages directly for current OpenAI crawler and search behavior. Do not infer proprietary ranking rules or undocumented training timelines.
 
 ## Observational research
 
@@ -33,7 +33,7 @@ Follow the applicable OpenAI documentation workflow for current OpenAI questions
 
 ## Evidence records
 
-The four sitemap/link/facet/content references above and the scaled-content policy were checked for the 2026-10-12 update. The supplied programmatic SEO article and HTML-sitemap news report motivated the review; their traffic examples and editorial inferences are not benchmark results or ranking guarantees.
+The four sitemap/link/facet/content references above and the scaled-content policy were last checked on 2026-10-12. Third-party case studies and news reports about programmatic SEO or HTML sitemaps are motivation for a test, not benchmark results or ranking guarantees.
 
 Retain URL, publisher, access date, relevant fact, market/version, direct-test versus vendor-reported status, and limitations. Cite sources supporting the exact claim. A source link cannot support facts absent from the page.
 

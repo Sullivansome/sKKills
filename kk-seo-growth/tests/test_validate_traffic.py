@@ -114,5 +114,31 @@ class TrafficTests(unittest.TestCase):
         self.assertIn('mismatched skill_sha256',errors)
 
 
+    def test_cohorts_in_one_experiment_may_use_their_own_windows(self):
+        def add_cohort(rows, mapping):
+            for row in list(rows):
+                if row['cohort_id'] == 'pilot' and row.get('page_id', 'x') in mapping.get('pages', {'x': 'x'}):
+                    copy = dict(row, cohort_id='pilot-b')
+                    if 'page_id' in copy:
+                        copy['page_id'] = mapping['pages'][row['page_id']]
+                        copy['canonical_url'] = copy['canonical_url'].replace('/0/', '/b/')
+                    copy.update(mapping.get('fields', {}))
+                    if 'period' in copy:
+                        copy.update(mapping[copy['period']])
+                    rows.append(copy)
+        self.edit('cohorts.csv', lambda rows: add_cohort(rows, {
+            'pages': {'treatment-0': 'treatment-b', 'control-0': 'control-b'},
+            'fields': {}}))
+        self.edit('cohorts.csv', lambda rows: [r.update(changed_at='2026-09-07') for r in rows if r['page_id'] == 'treatment-b'])
+        self.edit('experiments.csv', lambda rows: add_cohort(rows, {
+            'fields': {'release_at': '2026-09-07T08:00:00+08:00'}}))
+        window = {'baseline': {'period_start': '2026-08-10', 'period_end': '2026-09-06'},
+                  'followup': {'period_start': '2026-09-14', 'period_end': '2026-10-11'},
+                  'fields': {'extracted_at': '2026-10-13T12:00:00+08:00'}}
+        self.edit('observations.csv', lambda rows: add_cohort(rows, window))
+        result = self.check()
+        self.assertTrue(result['valid'], result['errors'])
+        self.assertEqual(4, len(result['comparisons']))
+
 if __name__ == '__main__':
     unittest.main()

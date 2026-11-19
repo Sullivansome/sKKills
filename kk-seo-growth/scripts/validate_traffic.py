@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Check normalized SEO experiment CSVs before descriptive traffic comparisons."""
+"""Check normalized SEO experiment CSVs before descriptive traffic comparisons.
+
+Standard library only. On Windows, IANA timezones need the tzdata package
+(`python -m pip install tzdata`); without it every row reports an invalid timezone.
+"""
 import argparse
 import csv
 from datetime import date, datetime
@@ -156,10 +160,11 @@ def validate(observations, cohorts, experiments):
                     comparisons.append({'experiment_id': key[0], 'cohort_id': key[1], 'arm': key[2], 'metric': key[3], 'page_count': len(groups.get(key[:3], [])), 'days': (a1-a0).days+1, 'baseline': float(before), 'followup': float(after), 'absolute_change': float(after-before), 'relative_change_percent': float((after-before)/before*100) if before > 0 else None})
         except (ValueError, InvalidOperation, ZoneInfoNotFoundError):
             errors.append(f'{key}: invalid comparison inputs')
-    # A control used alongside treatment must describe the same measurement context/window.
+    # Within one cohort, control and treatment must share a measurement context/window.
+    # Different cohorts of the same experiment may use their own windows.
     arm_contexts = {}
     for r in obs:
-        scope = (r['experiment_id'], r['metric'], r['period'])
+        scope = (r['experiment_id'], r['cohort_id'], r['metric'], r['period'])
         context = tuple(r[c] for c in (*CONTEXT, 'period_start', 'period_end'))
         if scope in arm_contexts and arm_contexts[scope] != context:
             errors.append(f'{scope}: treatment/control measurement contexts differ')

@@ -1,28 +1,24 @@
 # Versioned skill and traffic evaluation
 
-Use this reference when releasing the skill or implementing/evaluating SEO changes whose outcomes will be compared. Keep ordinary reviews and narrow fixes proportionate; do not require analytics setup for an unrelated edit.
+Use this reference when implementing or evaluating SEO changes whose outcomes will be compared. Keep ordinary reviews and narrow fixes proportionate; do not require analytics setup for an unrelated edit.
 
-## Identify and preserve the skill
+## Identify the skill that produced a change
 
-[VERSION](../VERSION) is the release label; [CHANGELOG.md](../CHANGELOG.md) defines version increments. The package SHA-256 identifies the exact file contents, including references, assets, scripts, and evaluations. A version label alone cannot distinguish local edits.
-
-Use the Python 3.9+ standard-library helper:
+[VERSION](../VERSION) is the release label. The package SHA-256 identifies the exact file contents; a version label alone cannot distinguish local edits. Record both:
 
 ```bash
 python3 <skill-dir>/scripts/skill_release.py identity
-python3 <skill-dir>/scripts/skill_release.py verify --registry <release-registry>
-python3 <skill-dir>/scripts/skill_release.py snapshot --registry <release-registry> --out <project-evidence-dir>/kk-seo-growth-1.1.0.zip
 ```
 
-Use the actual VERSION in archive names. Identity reports `released`, `modified-release`, `unregistered`, or `development`. A stable package must match a saved registry entry before it can be snapshotted; a copied standalone package needs an explicit registry path. Use `major.minor.patch-dev.N` for work in progress; it must not be presented as a stable release. The repository validator verifies archived releases and requires stable working contents to match their registered fingerprint; it permits an explicitly labeled development version. The explicit [PACKAGE_FILES.json](../PACKAGE_FILES.json) lists every bundled file. Review new entries rather than auto-adding all files during release; unexpected files and missing declared files stop packaging before their contents are read. This controls file inclusion, not secrets accidentally written into a declared file. The helper hashes sorted relative paths and their file hashes, ignores Python caches and OS metadata, rejects internal symlinks, and writes an archive containing the package and release manifest. It refuses to overwrite an existing archive. A matching hash proves content identity, not quality or publisher authenticity. Store the snapshot outside the skill folder with the site's experiment evidence; existing matching release archives can be reused. Do not edit released archives. Preserve raw exports in an access-appropriate project location, not inside this reusable skill or a public repository.
+Copy `skill_version`, `skill_sha256`, and `release_status` into the experiment ledger. `release_status` is `released` or `modified-release` only when the source repository's release registry is beside the skill; an installed copy reports `unregistered`, which is expected. A `-dev.N` version is work in progress, not a stable release. A `warnings` entry lists files an installer added; they are not part of the fingerprint. A matching hash proves content identity, not quality or publisher authenticity.
 
-When changing released guidance, set a new development VERSION and describe the change. Validate the package and experiments, then set the new stable VERSION and run `python3 <skill-dir>/scripts/skill_release.py publish --registry <release-registry>`. This creates a new manifest/ZIP pair with exclusive writes and rejects reuse of a registered version. Run `verify` and repository validation after publication. Never regenerate or edit old release pairs, including the legacy 1.0.0 archive. SHA-256 verifies consistency, not authenticity; the repository history remains the audit trail. Experiments already in progress retain their recorded version/hash. Earlier uses without recoverable packages remain `legacy-unknown`; do not invent their version or deployment date.
+Earlier uses without a recoverable package remain `legacy-unknown`; do not invent their version or deployment date. Experiments already in progress keep their recorded identity after the skill is updated. Preserve raw exports in an access-appropriate project location, not inside this reusable skill or a public repository. Maintainers releasing a new version of this skill follow `docs/seo-release.md` in the source repository.
 
 ## Record the intervention, not just the installed version
 
 Extend a project's existing experiment ledger or copy [experiment-log.csv](../assets/experiment-log.csv). The new columns append to the earlier contract; migrate old rows by header and leave unavailable values blank. Do not rewrite existing files from the blank template.
 
-Record experiment ID, skill version/hash/snapshot, actual deployed site revision (and artifact digest when the commit is insufficient), template/data revision, model/settings when available, affected URLs, publication time, hypothesis, budget, primary metric, and decision condition. Distinguish skill release date from deployment date and first observations. Installing a new skill does not apply it to old pages.
+Record experiment ID, skill version and hash (plus a snapshot reference if you archived one), actual deployed site revision (and artifact digest when the commit is insufficient), template/data revision, model/settings when available, affected URLs, publication time, hypothesis, budget, primary metric, and decision condition. Distinguish skill release date from deployment date and first observations. Installing a new skill does not apply it to old pages.
 
 Freeze URL membership in [page-cohorts.csv](../assets/page-cohorts.csv): `arm` is treatment or control; each row identifies one page in a cohort. Preserve prior identity. New pages, refreshed pages, and unchanged comparison pages need separate cohorts. If a page receives another substantive change during observation, end the period or mark the overlapping intervention; do not assign all its traffic to the latest installed skill. Retain redirected/retired members and explain their handling to avoid selecting only survivors.
 
@@ -44,9 +40,11 @@ Run the standard-library checker against the project's normalized CSVs:
 python3 <skill-dir>/scripts/validate_traffic.py --observations observations.csv --cohorts cohorts.csv --experiments experiments.csv
 ```
 
+On Windows, install the `tzdata` package first; Python's `zoneinfo` has no timezone database there and every row would otherwise fail as an invalid timezone.
+
 Use the bundled headers. Dates are inclusive ISO dates; page `first_published_at` and `changed_at` use reporting-local dates. `release_at` and `extracted_at` are ISO timestamps with UTC offsets; `timezone` uses an IANA name. Context fields must be explicit, using `all` or `none` where applicable. `unit=count` requires nonnegative integers. Each cohort/arm/metric has one aggregate baseline and one aggregate followup, not multiple query or daily rows. Normalize upstream with documented aggregation before validation. Supply unavailable baseline rows as not_measured/blank for new-page cohorts; the checker withholds their comparison.
 
-The checker validates membership, deployment provenance syntax, duplicate observations, source/filter consistency, periods, publication timing, unavailable values, and zero evidence references. Invalid data suppresses all calculated comparisons and exits nonzero. Partial/missing observations produce warnings and no comparison for that pair. It reports descriptive changes only and never declares a winning version. References are provenance pointers, not proof: independently inspect original exports and verify actual package hashes with the release helper. It cannot detect unreported concurrent interventions, tracking defects, false records, or determine whether a sample is sufficient.
+The checker validates membership, deployment provenance syntax, duplicate observations, source/filter consistency, periods, publication timing, unavailable values, and zero evidence references. Invalid data suppresses all calculated comparisons and exits nonzero. Partial/missing observations produce warnings and no comparison for that pair. It reports descriptive changes only and never declares a winning version. References are provenance pointers, not proof: independently inspect original exports and compare recorded package hashes with `identity` output. It cannot detect unreported concurrent interventions, tracking defects, false records, or determine whether a sample is sufficient.
 
 Follow the [worked synthetic experiment](../examples/traffic-pilot/README.md) for a complete ledger, cohorts, raw counts, normalized observations, and decision. Keep real site evidence outside the reusable package.
 

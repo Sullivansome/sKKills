@@ -1,17 +1,17 @@
 ---
 name: kk-seo-growth
-description: "Audit, research, implement, and measure website SEO and AI-search visibility. Use for indexability, search-intent content, programmatic SEO, internal linking, Search Console analysis, and versioned discovery experiments. Excludes generic copy edits, conversion-only redesigns, and standalone video or outreach work without a search-discovery objective."
+description: "Audit, research, implement, and measure website SEO and AI-search visibility. Use for indexability, robots.txt, sitemaps, canonicals, meta tags and titles, structured data, search-intent content, comparison pages, programmatic SEO, internal linking, rankings or traffic drops, Google Search Console analysis, ChatGPT/AI Overview visibility, and measured discovery experiments, even when the user just asks why a site gets no search traffic. Excludes generic copy edits, conversion-only redesigns, and standalone video or outreach work without a search-discovery objective."
 ---
 
 # SEO Growth
 
 Improve qualified discovery and useful customer outcomes. Work from evidence, a clear site purpose, and small measurable changes. Treat page count, ranking screenshots, and AI mentions as intermediate observations.
 
-Read [VERSION](VERSION) for the release identifier. When implementing or evaluating an SEO experiment, record the skill version and package fingerprint with the affected URLs and deployed site revision; follow [versioned evaluation](references/versioned-evaluation.md). A skill update alone does not change a website or start its traffic measurement window.
+When implementing or evaluating an SEO experiment whose traffic will be compared later, record the skill identity with the affected URLs and deployed site revision: [VERSION](VERSION) plus the `skill_sha256` and `release_status` printed by `python3 <skill-dir>/scripts/skill_release.py identity`. An installed copy normally reports `unregistered` because the release registry lives in the source repository; that is expected. Follow [versioned evaluation](references/versioned-evaluation.md). A skill update alone does not change a website or start its traffic measurement window.
 
 ## Start with scope and evidence
 
-1. Read the user's request, relevant visible history, project instructions, and current files. Reuse known decisions; retrieve personal context only when missing prior context would change the work.
+1. Read the user's request, the conversation so far, project instructions, and current files. Reuse known decisions.
 2. Identify the site, audience, language/market, product, primary outcome, and requested mode. Use [assets/project-brief.md](assets/project-brief.md) when these need recording. Ask only questions that block a consequential decision; complete independent work first.
 3. Distinguish modes: **review** produces findings; **research** produces opportunities; **draft** produces reviewable content; **implement** makes authorized changes; **monitor** analyzes supplied/current observations. Do not turn a review into a redesign or create a schedule merely because this skill describes a cadence.
 4. Inventory accessible evidence: public pages, rendered page if available, repository/build output, robots/sitemap/headers, Search Console, analytics, product events, costs, actual product tests, customer feedback. Use connected read tools or user-provided exports before introducing a new service.
@@ -28,7 +28,7 @@ Use public search for public lookups. Use an available browser only within its p
 | Comparison, alternatives, use-case, educational, product and video pages | [references/page-playbooks.md](references/page-playbooks.md) |
 | Data-driven page collections, generation, publication eligibility, refreshes | [references/programmatic-seo.md](references/programmatic-seo.md) |
 | Baselines, attribution, Search Console, experiments, reporting | [references/measurement.md](references/measurement.md) |
-| Skill releases, reproducible snapshots, traffic comparisons by version | [references/versioned-evaluation.md](references/versioned-evaluation.md) |
+| Recording skill identity on experiments, page cohorts, before/after traffic comparisons | [references/versioned-evaluation.md](references/versioned-evaluation.md) |
 | ChatGPT/Google AI visibility, claims, evaluation methodology | [references/ai-discovery.md](references/ai-discovery.md) |
 | Video, communities, reviews, earned coverage, outreach | [references/distribution.md](references/distribution.md) |
 | Current official guidance and verification starting points | [references/sources.md](references/sources.md) |
@@ -81,7 +81,7 @@ Do not present a weighted score as an objective probability of success. Start wi
 
 Use concrete demonstrations, reproducible examples, honest comparisons, and accurate product facts. Explain who the product suits and who should choose an alternative. Disclose ownership when comparing your own product.
 
-For code changes, follow the repository and hosting workflow. For Sites projects, use the applicable Sites skills when available; otherwise follow the project's documented hosting workflow. Preserve layout and unrelated behavior unless the user requests a redesign.
+For code changes, follow the repository's own build and hosting workflow. Preserve layout and unrelated behavior unless the user requests a redesign.
 
 Before editing a material page, capture the original HTML or build output and baseline. The optional Python 3.9+ standard-library helper performs **offline inventory and comparison**, not crawling or a complete SEO audit:
 
@@ -91,7 +91,7 @@ python3 <skill-dir>/scripts/page_inventory.py inventory ./after-html --out ./aft
 python3 <skill-dir>/scripts/page_inventory.py diff ./before.json ./after.json --out ./page-changes.json
 ```
 
-Use the same helper version and identical directory layouts for both snapshots; regenerate both when upgrading the helper. Review removed pages, headings, links, images, table rows, JSON-LD blocks, and changed metadata. Explain intentional removals. Follow with an actual source diff and a rendered-page check when available. The helper cannot evaluate JavaScript rendering, CSS, HTTP headers, indexing, truth, or conversions.
+Use the same helper version and identical directory layouts for both snapshots; the diff refuses snapshots from a different schema. Explain intentional removals and any `decode_warnings`. The helper's limits and the follow-up checks (source diff, rendered page) are in [technical-seo.md](references/technical-seo.md#preserve-and-verify).
 
 ### 6. Validate and distribute
 
@@ -107,15 +107,13 @@ After an authorized deployment, verify the changed public URLs and content. Dist
 
 Use [assets/experiment-log.csv](assets/experiment-log.csv). Record the baseline, hypothesis, change, release date, primary outcome, guardrails, acquisition source, comparison window, and confounders.
 
-Before calculating version comparisons, validate normalized observations with the bundled traffic checker and preserve uncertainty in exported zeros. For version comparisons, preserve exact page membership and raw observation provenance using the templates in [versioned evaluation](references/versioned-evaluation.md). Report traffic and useful outcomes separately; classify insufficient or confounded evidence without declaring a winning skill version.
-
-Separate Google organic, other search, identifiable AI referrals, social/video, paid, and direct/unknown. Separate an AI mention, a cited URL, a referral, and a useful action. Use [assets/ai-observations.csv](assets/ai-observations.csv) for controlled samples; do not present them as all-user market share.
+For before/after comparisons, follow [versioned evaluation](references/versioned-evaluation.md): fixed page cohorts, normalized observations checked with `scripts/validate_traffic.py`, and ambiguous exported zeros kept as missing. [measurement.md](references/measurement.md) covers Search Console exports, attribution, and channel separation. Use [assets/ai-observations.csv](assets/ai-observations.csv) for controlled AI-answer samples; do not present them as all-user market share.
 
 Report absolute counts with rates and denominators. Avoid calling a change successful from a few sales or simultaneous promotion. Recommend **continue, revise, gather evidence, or stop this experiment**. Do not make an automatic kill decision from a short period without organic traffic.
 
 ## Quality and behavior rules
 
-- Verify changing facts, prices, product capabilities, policies, reporting features, and provider behavior from current primary sources. Cite supporting sources near claims; record dates for reusable artifacts. Follow applicable OpenAI documentation instructions for OpenAI questions.
+- Verify changing facts, prices, product capabilities, policies, reporting features, and provider behavior from current primary sources. Cite supporting sources near claims; record dates for reusable artifacts.
 - Make useful pages, not keyword permutations. Avoid copied layouts/content, doorway pages, fake reviews, fabricated tests, unsupported superlatives, and misleading comparisons.
 - Do not promise rankings, AI citations, indexing dates, sales, or passive income. Do not equate correlation with causation.
 - Do not recommend paid ranking links, private blog networks, reciprocal first-place rankings, hidden text, bot-specific misleading content, or manufactured mentions as durable growth tactics.
@@ -123,7 +121,7 @@ Report absolute counts with rates and denominators. Avoid calling a change succe
 - Keep unknowns actionable: state what is missing, what can be done now, and the smallest evidence needed for the next decision.
 - Reuse existing tools and infrastructure. Introduce a paid data provider or automated system only to resolve a stated limitation with known cost and user authorization.
 - Never put credentials, private customer data, or sensitive analytics payloads into public artifacts. Honor existing consent and analytics requirements without inventing a new approval process.
-- Save user-facing artifacts through the user's established destination and applicable file/Library workflow. Keep repository changes in their repository. Do not expose internal storage details.
+- Save artifacts where the user or project already keeps them. Keep repository changes in their repository and real site evidence (exports, analytics) out of this reusable skill.
 
 ## Deliver a decision-ready result
 

@@ -1,6 +1,6 @@
 ---
 name: kk-project-bootstrap
-description: Scaffold repositories or configure reproducible tooling, hooks, CI, and initial artifact build pipelines. Use for missing or broken project setup; use kk-distribution for package/signing decisions and kk-release-delivery for promotion, rollout, and recovery.
+description: Scaffold repositories or configure reproducible tooling, hooks, CI, and initial artifact build pipelines. Use for missing or broken project setup; use kk-distribution for package formats, signing, and install/update trust.
 ---
 
 # Project Bootstrap
@@ -58,7 +58,7 @@ Follow the stack reference file. Universal principles:
 
 ## Step 4 — Pre-commit hooks
 
-Prefer fast staged-file format/lint checks. If a tool only supports whole-project checks, use non-mutating checks against the staged snapshot or put it in pre-push/CI; never silently include unstaged hunks. Preserve an existing fast meaningful test hook. Move slow checks out of the commit path based on measured runtime.
+Prefer fast staged-file format/lint checks. If a tool only supports whole-project checks, use non-mutating checks against the staged snapshot or put it in pre-push/CI; never silently include unstaged hunks. Preserve an existing fast meaningful test hook. Move slow checks out of the commit path based on measured runtime. Hooks are check-only unless the tool re-stages only the fixed staged content (lint-staged does); otherwise an auto-fix can sweep unstaged edits into the commit.
 
 Per-stack tooling: `lint-staged` + `husky` (Node), `pre-commit` framework (Python, or polyglot), or a plain `.git/hooks/pre-commit` script for tiny projects. The stack reference has the exact config.
 
@@ -68,7 +68,7 @@ Verify hooks in an isolated temporary repository with the relevant configuration
 
 Preserve the existing CI provider. For GitHub Actions, adapt [assets/workflows/ci.yml](assets/workflows/ci.yml). Run applicable Step 2 commands, respecting generation dependencies. Use ecosystem-supported dependency caching where useful.
 
-The template deliberately fails until adapted. Replace its guard with actual applicable commands; merely deleting the guard is not a working CI configuration. Run required code generation before checks that consume generated types. Preserve an existing CI provider unless switching is requested. Use explicit read-only permissions for checks, bounded job timeouts, and job-scoped release permissions. Keep secrets away from untrusted PR code. Resolve production action references to verified full commit SHAs and use the project's tested runtime/toolchain versions.
+The template deliberately fails until adapted. Replace its guard with actual applicable commands; merely deleting the guard is not a working CI configuration. Run required code generation before checks that consume generated types. Use explicit read-only permissions for checks, bounded job timeouts, and job-scoped release permissions. Keep secrets away from untrusted PR code. Resolve production action references to verified full commit SHAs and use the project's tested runtime/toolchain versions.
 
 For a desktop app, add a smoke-build job on the target platforms (macOS, Windows, Linux) so cross-platform breakage shows up before release day, not during it.
 
@@ -76,9 +76,9 @@ For a desktop app, add a smoke-build job on the target platforms (macOS, Windows
 
 For requested release automation, preserve the provider, trigger, and product's distribution model. Skip this step for hooks/CI-only work.
 
-Read [references/release.md](references/release.md) for pipeline wiring and the relevant stack recipe. Use `kk-distribution` for package formats, signing, and installation trust; use `kk-release-delivery` for candidate promotion and recovery. Consult siblings only when available and needed; otherwise establish the scoped requirements directly.
+Read [references/release.md](references/release.md) for pipeline wiring and the relevant stack recipe. Use `kk-distribution` for package formats, signing, and installation trust when it is available; otherwise establish those requirements directly.
 
-Separate build and publication jobs. Every directly distributed target (downloads, install scripts, repositories/feeds you operate) must pass final-payload publisher signatures, applicable native signing/notarization, and verification before publication; missing keys or failed checks block it. Checksums and updater signatures alone are insufficient. For app stores and language registries (App Store, Play, PyPI, npm, crates.io), meet the channel's required signing and use its provenance/attestation mechanism instead of detached signatures nobody verifies.
+Separate build and publication jobs. Every directly distributed target (downloads, install scripts, repositories/feeds you operate) must pass final-payload publisher signatures, applicable native signing/notarization, and verification before publication; missing keys or failed checks block it. Checksums and updater signatures alone are insufficient. For app stores, language registries (App Store, Play, PyPI, npm, crates.io) and moderated repositories you do not operate (Chocolatey community, homebrew-core), meet the channel's required signing and use its provenance/attestation mechanism instead of detached signatures nobody verifies.
 
 ## Step 7 — Verify, don't assume
 

@@ -1,5 +1,14 @@
 # SEO skill releases
 
+## 1.2.0-dev.1 — unreleased
+
+- Removes instructions written for other agent hosts (Sites skills, Library workflow, OpenAI documentation workflow, personal context retrieval) and author-specific examples.
+- `identity` works on installed copies: undeclared files produce a warning instead of failing, and a missing registry reports `unregistered`. Packaging commands stay strict. Tool caches (`.ruff_cache`, `.mypy_cache`, `.venv`, `.git`) are ignored; manifests are read as UTF-8.
+- Maintainer release, snapshot, and publish steps move from `references/versioned-evaluation.md` to the repository's `docs/seo-release.md`.
+- Traffic checker: treatment/control context matching is per cohort, so cohorts of one experiment may use different windows. Documents the Windows `tzdata` requirement.
+- Page inventory (schema 2; regenerate both snapshots): honours a BOM or declared charset and warns on undecodable bytes, ignores SVG `<title>`, strips CDATA/comment wrappers around JSON-LD, closes an unclosed anchor at the next `<a>`, and records `<html lang>` and hreflang alternates.
+- SKILL.md defers duplicated helper and measurement detail to references; the description names common SEO trigger terms.
+
 ## 1.1.0 — 2026-10-12
 
 Adds explicit package contents, release-registry and archive verification, development identities, and rejection of reused release labels. Adds normalized traffic validation, verified-zero provenance, a complete synthetic experiment, and matched behavioral evaluation evidence recorded outside the package. Existing nonzero observation rows remain usable; ambiguous exported zeros must be reviewed before comparison. The immutable 1.0.0 archive is retained.

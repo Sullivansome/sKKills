@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 # CLI tarball installer template. Fill in REPO, BIN and trusted public key.
+# The publisher key must be RSA or ECDSA: `openssl dgst -verify` cannot check Ed25519/Ed448.
 # Each tarball must contain exactly one regular nonempty file named BIN at its root.
 # Publish artifact.sig, checksums.txt and checksums.txt.sig; signatures are mandatory.
 # checksums.txt starts with '# version v1.2.3' for the selected release.
@@ -53,8 +54,11 @@ trap 'exit 1' HUP INT TERM
 cat > "$tmp/publisher.pem" <<'KK_RELEASE_PUBLIC_KEY'
 REPLACE_WITH_TRUSTED_PUBLISHER_PUBLIC_KEY_PEM
 KK_RELEASE_PUBLIC_KEY
-openssl pkey -pubin -in "$tmp/publisher.pem" -noout >/dev/null 2>&1 \
+key_info="$(openssl pkey -pubin -in "$tmp/publisher.pem" -noout -text 2>/dev/null)" \
   || die "configure a valid trusted publisher public key before distribution"
+case "$key_info" in
+  *ED25519*|*ED448*) die "publisher key must be RSA or ECDSA; Ed25519/Ed448 signatures cannot be verified here" ;;
+esac
 
 verify_signature() {
   openssl dgst -sha256 -verify "$tmp/publisher.pem" -signature "$2" "$1" >/dev/null 2>&1 \
@@ -66,7 +70,7 @@ if [ -z "$version" ]; then
   command -v python3 >/dev/null 2>&1 \
     || die "python3 is required for latest-release discovery; set VERSION to select an explicit release"
   fetch "https://api.github.com/repos/$REPO/releases/latest" "$tmp/release.json"
-  version="$(python3 - "$tmp/release.json" <<'KK_RELEASE_JSON'
+  version="$(python3 -I - "$tmp/release.json" <<'KK_RELEASE_JSON'
 import json
 import re
 import sys

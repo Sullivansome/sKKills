@@ -4,77 +4,91 @@
     {
       "id": 0,
       "prompt": "I want to start a new Tauri v2 desktop app with a React+TypeScript frontend. Set me up completely: scaffold the project, configure linting/formatting/typecheck with pre-commit hooks, add a GitHub Actions CI workflow, and set up a release pipeline that builds dmg, msi, and AppImage installers and publishes them to GitHub Releases when I push a tag. Also add a curl install script for the Linux AppImage.",
-      "expected_output": "A scaffolded Tauri+React+TS project with biome/eslint+prettier config, tsc typecheck script, husky+lint-staged pre-commit hook, CI workflow running the same checks, a tag-triggered tauri-action release workflow with a macOS/Windows/Linux matrix producing dmg/msi/AppImage, and a checksum-verified AppImage installer with format-specific handling.",
+      "expected_output": "A scaffolded Tauri+React+TS project with biome/eslint+prettier config, tsc typecheck script, husky+lint-staged pre-commit hook, CI workflow running the same checks, a tag-triggered tauri-action release workflow with a macOS/Windows/Linux matrix producing dmg/msi/AppImage candidates, gated on native signing/notarization and detached signatures over the final payloads, with publication blocked and reported while signing credentials are missing. Any AppImage installer verifies the publisher signature and does not use tar extraction.",
       "files": [],
       "expectations": [
-        "Configures real frontend and Rust checks with preserved staged content.",
-        "Produces requested desktop artifacts and matching checksums; AppImage installation does not use tar extraction.",
+        "Configures real frontend (format, lint, typecheck) and Rust (fmt, clippy, test) checks, and the pre-commit hook keeps unstaged changes out of the commit.",
+        "The release workflow requires native signing/notarization plus detached publisher signatures over every final dmg/msi/AppImage before publication, and does not treat checksums alone as sufficient.",
+        "Any AppImage install path verifies a signature and does not use tar extraction.",
         "Does not push a tag or publish simply to verify setup."
       ]
     },
     {
       "id": 1,
-      "prompt": "I have an existing Node/TypeScript CLI project in this directory \u2014 package.json exists with a couple of deps and a build script, but there's zero tooling. Add linting, formatting, type checking, a pre-commit hook, and GitHub CI. Don't restructure my code.",
+      "prompt": "I have an existing Node/TypeScript CLI project in this directory (evals/files/node-cli) — package.json exists with a couple of deps and a build script, but there's zero tooling. Add linting, formatting, type checking, a pre-commit hook, and GitHub CI. Don't restructure my code.",
       "expected_output": "Adds compatible lint/format/typecheck tooling, a meaningful test if a runner is added (or explicitly reports missing tests), a staged-content-safe hook, and real CI checks without restructuring source or replacing the build.",
-      "files": [],
+      "files": [
+        "evals/files/node-cli/package.json",
+        "evals/files/node-cli/tsconfig.json",
+        "evals/files/node-cli/src/index.ts"
+      ],
       "expectations": [
-        "Preserves source layout and existing build behavior.",
-        "CI runs real applicable checks; missing tests are explicit instead of dummy passes.",
-        "Hook verification preserves staged and unstaged user work."
+        "src/index.ts is unchanged except for formatter output, and the existing `build` script still runs `tsc -p tsconfig.json`.",
+        "CI runs format check, lint, typecheck and build; it states that no tests exist instead of adding a dummy passing test or a no-tests-found override.",
+        "Hook behaviour is verified in a temporary repository, not by committing or blanket-staging in the user's project."
       ]
     },
     {
       "id": 2,
       "prompt": "Scaffold a new Python CLI called 'logtail' that tails and filters log files. I want uv, ruff, mypy, pytest, pre-commit hooks, and GitHub CI. Set up a release flow that publishes standalone binaries for mac/linux/windows to GitHub Releases on tag push, plus a curl install script.",
-      "expected_output": "uv-scaffolded project with ruff+mypy+pytest configured in pyproject.toml, .pre-commit-config.yaml, CI workflow, a tag-triggered release workflow building per-OS binaries with checksums.txt, and install.sh adapted from the template with the correct asset naming.",
+      "expected_output": "uv-scaffolded project with ruff+mypy+pytest configured in pyproject.toml, .pre-commit-config.yaml, CI workflow, a tag-triggered release workflow building per-OS binaries, a signed checksums.txt (`checksums.txt.sig`) and a detached `.sig` per archive, install.sh adapted from the template with the correct asset naming and a trusted-key placeholder, and publication blocked until signing is configured.",
       "files": [],
       "expectations": [
         "Uses the same locked Python tooling locally and in CI.",
-        "Release artifacts match installer OS/architecture names and have required checksums.",
+        "Release archives follow the installer's `BIN-OS-arch.tar.gz` naming and ship a detached signature per archive plus a signed checksums.txt; checksums alone are not presented as sufficient.",
         "Reports platform/signing checks not actually run."
       ]
     },
     {
       "id": 3,
       "prompt": "I have a Wails app (Go backend + React TS frontend in frontend/) that I've been hacking on. Set up proper tooling: format/lint/test for both halves, pre-commit hooks, GitHub CI, and a release workflow that builds the macOS dmg, Windows exe, and Linux AppImage on tag push and attaches them to a GitHub release.",
-      "expected_output": "gofmt/golangci-lint/vet/test for Go, biome or eslint+tsc+vitest for frontend/ (with wailsjs/ excluded from lint), pre-commit config covering both, CI with Go and frontend jobs plus wails build smoke step, and a manual matrix release workflow using create-dmg/linuxdeploy + softprops/action-gh-release with checksums.",
+      "expected_output": "gofmt/golangci-lint/vet/test for Go, biome or eslint+tsc+vitest for frontend/ (with wailsjs/ excluded from lint), pre-commit config covering both, CI with Go and frontend jobs plus wails build smoke step, and a manual matrix release workflow using create-dmg/linuxdeploy + a gated softprops/action-gh-release publication job that runs only after Developer ID/notarization, Authenticode, Linux payload signatures and a signed checksum manifest all verify.",
       "files": [],
       "expectations": [
         "Recognizes Wails and verifies both Go and frontend responsibilities.",
         "Generated bindings remain typechecked and are excluded from format/lint.",
-        "Includes the requested Wails smoke build and matching release assets."
+        "Includes the requested Wails smoke build; release assets carry native and detached signatures, and publication waits for every target to verify."
       ]
     },
     {
       "id": 4,
       "prompt": "My team has a SwiftUI macOS app (Xcode project, no SwiftPM) with zero automation. Add SwiftFormat + SwiftLint config, a pre-commit hook, CI on GitHub Actions, and a release pipeline that notarizes the app and publishes a dmg to GitHub Releases when we tag. Tell us which secrets we need to add.",
-      "expected_output": ".swiftformat + .swiftlint.yml configs, staged-files-only pre-commit hook script, macos-runner CI pinning Xcode version running swiftformat --lint/swiftlint --strict/xcodebuild test, and a tag-triggered release workflow doing archive -> Developer ID export -> notarytool -> create-dmg -> gh release upload, with a clear list of required Apple secrets.",
+      "expected_output": ".swiftformat + .swiftlint.yml configs, staged-files-only pre-commit hook script, macos-runner CI pinning Xcode version running swiftformat --lint/swiftlint --strict/xcodebuild test, and a tag-triggered release workflow doing archive -> Developer ID export -> notarytool -> create-dmg -> gh release upload, with a clear list of required Apple secrets. Publication also requires a detached signature over the final DMG and is blocked while signing or notarization credentials are missing.",
       "files": [],
       "expectations": [
         "Chooses an Xcode scheme/destination and tested tool versions instead of assuming SwiftPM.",
         "Uses staged-content-aware non-mutating hooks.",
-        "Lists required signing/notarization secrets without exposing them or claiming absent signing succeeded."
+        "Lists required signing/notarization secrets without exposing them or claiming absent signing succeeded.",
+        "Publication requires Developer ID signing, notarization/stapling and a detached signature over the final DMG; missing credentials block it rather than producing an unsigned release."
       ]
     },
     {
       "id": 5,
       "prompt": "Set up my Kotlin Android app repo properly: ktlint, detekt, pre-commit hook, CI that runs lint and unit tests, and a release flow that builds a signed APK from the git tag and attaches it to a GitHub release.",
-      "expected_output": "ktlint + detekt gradle plugins configured, staged-content-safe non-mutating hook with measured runtime, CI with setup-java + setup-gradle running ktlintCheck/detekt/lint/testDebugUnitTest/assembleDebug, tag-triggered release workflow deriving versionName from the tag, signing via keystore secrets, uploading the APK.",
+      "expected_output": "ktlint + detekt gradle plugins configured, staged-content-safe non-mutating hook with measured runtime, CI with setup-java + setup-gradle running ktlintCheck/detekt/lint/testDebugUnitTest/assembleDebug, tag-triggered release workflow deriving versionName from the tag, signing via keystore secrets, uploading the APK. The released APK also gets a detached publisher signature, and missing keystore secrets block publication.",
       "files": [],
       "expectations": [
         "Uses Gradle tooling and non-mutating staged-content-aware hooks.",
         "Retains real Android lint/test/build gates.",
-        "Prepares signing and tag-version wiring without embedding signing secrets."
+        "Prepares signing and tag-version wiring without embedding signing secrets.",
+        "The GitHub-released APK is signed with the release keystore and has a detached publisher signature; missing keystore secrets block publication."
       ]
     },
     {
       "id": 6,
-      "prompt": "Add hooks and CI to my existing Swift project. I have partly staged Swift files and unrelated staged README edits. Verify the hook without creating commits in this repo.",
+      "prompt": "Add hooks and CI to my existing Swift package (evals/files/swift-partial). To reproduce my working tree, copy it somewhere and run its setup-git-state.sh on the copy: part of Greeter.swift is staged, another part isn't, and there's an unrelated staged README edit. Verify the hook without creating commits in this repo.",
       "expected_output": "Pinned staged-content-aware non-mutating checks, isolated hook verification, no blanket staging, real CI commands.",
-      "files": [],
+      "files": [
+        "evals/files/swift-partial/Package.swift",
+        "evals/files/swift-partial/Sources/Greeter/Greeter.swift",
+        "evals/files/swift-partial/Tests/GreeterTests/GreeterTests.swift",
+        "evals/files/swift-partial/README.md",
+        "evals/files/swift-partial/setup-git-state.sh"
+      ],
       "expectations": [
-        "Preserves partial staging and unrelated work.",
-        "Verifies formatting/lint failures produce nonzero exit codes without committing in the user repository."
+        "In the reproduced repository, `git diff --cached` and `git diff` are identical before and after the task, so the partial Greeter.swift staging and the README edit survive.",
+        "The reproduced repository has no new commits and nothing was added with blanket `git add`.",
+        "Shows, in a separate temporary repository, that a formatting or lint violation makes the hook exit nonzero."
       ]
     },
     {

@@ -34,7 +34,7 @@ For before/after comparisons, preserve baseline prompts/conditions, use comparis
 
 Inspect prompt sampling, market/language, model/interface, timing, repetition, source extraction, denominators, treatment/control, and downstream traffic. Distinguish citations from all consulted URLs. Large samples cannot repair biased selection or establish causation.
 
-Treat case studies as hypotheses. State when raw data or reproducible methods are unavailable. Do not transfer French agency-ranking patterns to English consumer games without testing.
+Treat case studies as hypotheses. State when raw data or reproducible methods are unavailable. Do not transfer patterns observed in one market, language, or category to another without testing.
 
 ## Credible external evidence
 

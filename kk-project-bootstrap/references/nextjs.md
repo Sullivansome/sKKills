@@ -8,11 +8,11 @@ Next.js is the Node/TS stack with framework-specific defaults. Read `node-ts.md`
 pnpm create next-app@latest my-app --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
 ```
 
-Use `--turbopack` for dev. For an existing project, never re-scaffold — just add what's missing.
+Next 16 uses Turbopack by default; on 15.x, pass `--turbopack` to `next dev` if wanted. For an existing project, never re-scaffold — just add what's missing.
 
 ## Lint + format
 
-- **ESLint**: `eslint-config-next` is the official config (includes React, hooks, a11y, and `@next/next` rules like no-img-element). Use the flat-config exports supported by the installed `eslint-config-next` version (for example its `core-web-vitals` entry), preserving valid existing configuration. `next lint` was deprecated in Next 15.4 and removed in Next 16; run `eslint .` directly for modern versions.
+- **ESLint**: `eslint-config-next` is the official config (includes React, hooks, a11y, and `@next/next` rules like no-img-element). Use the flat-config exports supported by the installed `eslint-config-next` version (for example its `core-web-vitals` entry), preserving valid existing configuration. `next lint` was deprecated in Next 15.5 and removed in Next 16; run `eslint .` directly for modern versions.
 - **Biome alternative**: works but you lose the Next-specific rules. Acceptable for teams that prefer speed; keep ESLint if the user relies on `next/core-web-vitals`.
 - Format with Prettier (`prettier-plugin-tailwindcss` if Tailwind) or Biome format. Never run two formatters.
 
